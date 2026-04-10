@@ -33,17 +33,19 @@ export default function ActiveUsers() {
             const imagePath = `${serverApi}/${member.memberImage}`;
                   return (
                     <Card key={member._id} variant="outlined" className={"card"}>
-                      <CardOverflow>
-                        <AspectRatio ratio="1">
-                          <img src={imagePath} alt="" />
-                        </AspectRatio>
-                        <Typography
-                          className={"member-nickname"}
-                        >
-                          {member.memberNick}
-                        </Typography>
-                      </CardOverflow>
-                    </Card>
+  <CardOverflow className="card-image">
+    <AspectRatio ratio="1">
+      <img src={imagePath} alt="" />
+    </AspectRatio>
+  </CardOverflow>
+
+  {/* ALohida pastki blok */}
+  <Box className="card-footer">
+    <Typography className="member-nickname">
+      {member.memberNick}
+    </Typography>
+  </Box>
+</Card>
                   );
                 })
               ) : (

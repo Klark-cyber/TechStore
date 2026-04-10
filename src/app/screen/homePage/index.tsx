@@ -75,7 +75,7 @@ member
 
   return (
   <div className={"homepage"}> {/**Barcha section complar homepage schreen components ichida joylashtirildi sababi ular faqat HomePage schreen comp ichida foydalaniladi */}
-    <Statistics/>
+   
     <PopularDishes/>
     <NewDishes/>
     <Advertisement/>

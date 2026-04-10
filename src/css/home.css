@@ -326,17 +326,17 @@ line-height: normal;
     
 }
 
-.homepage .active-users-frame  .cards-frame .card {
-margin-top: 90px;
-width: 300px;
-height: 265px;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-background-color: #f8f8ff;
-border: #f8f8ff;
-border-radius: 12px 12px 0px 0;
+.homepage .active-users-frame .cards-frame .card {
+  margin-top: 90px;
+  width: 300px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* MUHIM */
+  
+  background-color: #f8f8ff;
+  border-radius: 12px;
+  overflow: hidden; /* MUHIM */
 }
 
 
@@ -349,7 +349,7 @@ color: #000;
 background-color: #f8f8ff;
 text-align: center;
 font-family: "Roboto Serif";
-font-size: 12px;
+font-size: 20px;
 font-style: normal;
 font-weight: 600;
 line-height: normal;

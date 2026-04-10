@@ -1,172 +1,1154 @@
-import { Box, Button, Container, ListItemIcon, Menu, MenuItem, Stack } from "@mui/material";
-import { NavLink } from "react-router-dom";
-import Basket from "./Basket";
-import { useEffect, useState } from "react";
+import {Box,Button,Container,ListItemIcon,Menu,MenuItem,Stack,Badge,Drawer,IconButton,Divider,InputBase,} from "@mui/material";
+import { NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
-import { Logout } from "@mui/icons-material";
-import { T } from "../../../lib/types/common";
+import {
+  Logout,
+  ShoppingCartOutlined,
+  PersonOutlined,
+  MenuOutlined,
+  CloseOutlined,
+  AddOutlined,
+  RemoveOutlined,
+  DeleteOutlineOutlined,
+  SearchOutlined,
+  LocationOnOutlined,
+  PhoneOutlined,
+  Facebook,
+  Twitter,
+  Instagram,
+  HeadsetMicOutlined,
+  VerifiedUserOutlined,
+  LocalShippingOutlined,
+  AssignmentReturnOutlined,
+  BoltOutlined,
+} from "@mui/icons-material";
 
 interface HomeNavbarProps {
-      cartItems: CartItem[]; //catItems bu type CartItems bolgan itemlardan iborat array boladi
-        onAdd: (item: CartItem) => void;
-        onRemove: (item: CartItem) => void;
-        onDelete: (item: CartItem) => void;
-        onDeleteAll: () => void;
-        setSignUpOpen: (isOpen: boolean) => void;
-        setLoginOpen: (isOpen: boolean) => void;
-        handleLogOutClick: (e: React.MouseEvent<HTMLElement>) => void;
-        anchorEl: (HTMLElement | null);
-        handleCloseLogout: () => void; //handle bolganda yani rasm ustiga bosilganda logout oynasi ochiladi
-        handleLogoutRequest: () => void
-
-    }
-
-export default function HomeNavbar(props: HomeNavbarProps ) { //HomePagedan boshqa pagelar uchun Homenavbar mantigi.//css uchun foydalaniladigan classlarni nomlashda snake casedan foydlalanamiz.ushbu classga frontend uchun yaratib olingan css ichida ishlov beramiz.Ushbu classga tegishli cssni togridan togri app.tsx ichiga chaqirib olamiz
-    
-    const {cartItems, onAdd,onDelete,onDeleteAll,onRemove, setSignUpOpen, setLoginOpen, handleLogOutClick, anchorEl, handleCloseLogout, handleLogoutRequest} = props;
-    
-    const [count, setCount] = useState<number>(0); //useState methodida 0 const state qiymati, setState state qiymatini ozgartiruvchi method
-    const [value, setValue] = useState<boolean>(true);
-    const {authMember} = useGlobals();
-    //setCountni handler korinishida hosil qilamiz
-    // const buttonHandler = () => {
-    //     setCount(count + 1);
-    // }
-
-    //useEffect orqali lifecycle metodlarini yani 3 xil fazani hosil qilamiz
-    //useEffect componentDidMount yani component dastlabki vaqtdagina ishga tushadi.ikkinchi marta ishga tushishi esa array dependencies (value)componentDidUpdatega boglanadi
-    // useEffect(() => { //Bu effectni 2 ta argumenti mavjud 1-callback function 2-Array Dependencies yani unga kiritilgan ozgaruvchi qiymati har ozgarganida useEffect ishga tushadi.Agar arrayga qiymat bermasak useEffect faqat 1 marta ishga tushadi
-    //     console.log("componentDidMount", count); //useEffect dastlabki ishga tushganda componentDidMount ishga tushadi.Data Fetch yana dataBasedan malumot olib kelganda ishlatamiz
-    //     setCount(count + 1); //callBack function
-    
-    //  return () => { //componentWillUnmount return orqali hosil qilinadi
-    //     console.log("componentWillUnmount"); 
-    // }
-    // }, [value]) //value ozgarishi componentDidUpdate yani qiymat ozgarganda ishga tushadi
-
-
-    
-    // const buttonHandler = () => { //useEffect orqali button har bosilganda value ozgaradi buni natijasida useEffect ishga tushadi
-    //     setValue(!value);
-    // }
-
-    return <div className="home-navbar"> 
-        <Container className="navbar-container" >
-            <Stack className="menu">  {/*Navbar linklarigaga tegishli stack.Menu qism uchun*/}
-                <Box> {/*Burak logosiga tegishli box */}
-                    <NavLink to="/"> {/*imgga Navlink mUI orqali link biriktiramiz */}
-                        <img className="brand-logo" src="/icons/burak.svg" /> {/*Burak Logo.img html elementiligi sababli material UI elementlarini qollay olmaymiz va sx emas style deb yozdik */}
-                    </NavLink>
-                </Box>
-
-            <Stack className="links"> {/*menu elementlari uchun stack */}
-                <Box className={"hover-line"}>
-                    <NavLink to="/" activeClassName={"underline"} >Home</NavLink>
-                </Box>
-                <Box className={"hover-line"}>
-                    <NavLink to="/products" activeClassName={"underline"} >Products</NavLink>
-                </Box >
-                {authMember ? ( //Agar login bolgan user bolsa korsatiladigan linklarni shu shaklda ternary operatori yordamida yozdik
-                <Box className={"hover-line"}>
-                    <NavLink to="/orders" activeClassName={"underline"} >Orders</NavLink>
-                </Box>
-                ) : null}
-                {authMember ? ( //Agar login bolgan user bolsa korsatiladigan linklarni shu shaklda ternary operatori yordamida yozdik
-                <Box className={"hover-line"}>
-                    <NavLink to="/member-page" activeClassName={"underline"} >My Page</NavLink>
-                </Box>
-                ) : null}
-                <Box className={"hover-line"}>
-                    <NavLink to="/help" activeClassName={"underline"} >Help</NavLink>
-                </Box>
-
-
-                {/*BASKET */}
-                <Basket 
-                cartItems={cartItems}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onDelete={onDelete} 
-                onDeleteAll={onDeleteAll}
-                /> {/* Basket.tsx dan basket functional komponentini chaqirib oldik */}
-
-                {!authMember ? (
-                    <Box>
-                        <Button variant="contained" className="login-button"  onClick={() => setLoginOpen(true)}>Login</Button> {/* style orniga sx yozish ham mumkin */}
-                    </Box>
-                ) : (
-                <img className="user-avatar" src={authMember?.memberImage ? `${serverApi}/${authMember?.memberImage}` : "/icons/default-user.svg"} aria-haspopup={"true"} onClick={handleLogOutClick}/> // useGlobals ichidagi authMemberdan memberImageni qabul qilib oldik
-                )} {/**Agar member login bolmagan bolsa unga login menuni ham korsatish */}
-
-{/**User rasmi ustiga bosganda logout oynasi qilish mantigi */}
-<Menu
-    anchorEl={anchorEl}
-	id="account-menu"
-    open={Boolean(anchorEl)}
-    onClose={handleCloseLogout} //logoutdan boshqa joy bosilganda ham logout oynasi yopiladi
-    onClick={handleCloseLogout} //logout bosilganda oyna yopiladi
-	PaperProps={{
-		elevation: 0,
-		sx: {
-			overflow: 'visible',
-			filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-			mt: 1.5,
-			'& .MuiAvatar-root': {
-				width: 32,
-				height: 32,
-				ml: -0.5,
-				mr: 1,
-			},
-			'&:before': {
-				content: '""',
-				display: 'block',
-				position: 'absolute',
-				top: 0,
-				right: 14,
-				width: 10,
-				height: 10,
-				bgcolor: 'background.paper',
-				transform: 'translateY(-50%) rotate(45deg)',
-				zIndex: 0,
-			},
-		},
-	}}
-	transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-	anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
->
-	<MenuItem onClick={handleLogoutRequest}>
-		<ListItemIcon>
-			<Logout fontSize="small" style={{ color: 'blue' }} />
-		</ListItemIcon>
-		Logout
-	</MenuItem>
-</Menu>
-
-
-            </Stack> 
-            </Stack> 
-
-            <Stack className={"header-frame"}> {/*Navbar ichidagi matnlarga tegishli stack */}
-                <Stack className={"detail"}>
-                    <Box className={"head-main-txt"}>World's Most Delicious Cousine</Box>
-                    <Box className={"wel-txt"}> The Choice,not just a choice</Box>
-                    <Box className={"service-txt"}>24 hours service</Box> {/*useState hook orqali hosil qilgan const countni ishlatdik*/}
-                    <Box className={"signup"}>
-                      {!authMember ? (
-                        <Button variant={"contained"} 
-                        className={"signup-button"} 
-                        onClick={() => setSignUpOpen(true)} //signup button bosilganda setSignUpOpen ishga tushib signUpOpen qiymatini default falsedan truega ozgartiradi Natijada Authentification signup modali isga tushib signup oynasi ochiladi. va browser yangilanadi  
-                        >SIGNUP
-                        </Button>) : null} </Box> {/* signup buttoni login bolmagan userlar uchun korinishi kerak.Ternary operator */}
-                </Stack>
-                <Box className={"logo-frame"} >
-                    <div className="logo-img"></div>
-                </Box>
-            </Stack>
-        </Container>
-        </div>; 
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onDeleteAll: () => void;
+  setSignUpOpen: (isOpen: boolean) => void;
+  setLoginOpen: (isOpen: boolean) => void;
+  handleLogOutClick: (e: React.MouseEvent<HTMLElement>) => void;
+  anchorEl: HTMLElement | null;
+  handleCloseLogout: () => void;
+  handleLogoutRequest: () => void;
 }
 
-// {/** yoki onClick={() => {setCount(count + 1)}} */} 70 qatordagi kodni shu holatda yozish ham mumkin.yoki onClick={() => buttonHandler()} yoki onClick={buttonHandler} korinishida sababi buttonHandler funck argument qabul qilmaydi shu sababli qisqartirib yozish mumkin 
+const BLUE = "#2979FF";
+const BLUE_DARK = "#1565c0";
+const BG = "#080814";
+const BG2 = "#0d1020";
+const BG3 = "#111827";
+const BORDER = "rgba(41,121,255,0.15)";
+
+export default function HomeNavbar(props: HomeNavbarProps) {
+  const {
+    cartItems,
+    onAdd,
+    onRemove,
+    onDelete,
+    onDeleteAll,
+    setSignUpOpen,
+    setLoginOpen,
+    handleLogOutClick,
+    anchorEl,
+    handleCloseLogout,
+    handleLogoutRequest,
+  } = props;
+
+  const { authMember } = useGlobals();
+  const location = useLocation();
+  const [cartOpen, setCartOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState("");
+
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+
+  const isActive = (to: string) => location.pathname === to;
+
+  const categoryLinks = [
+    { label: "All Categories", to: "/products" },
+    { label: "LAPTOPS", to: "/product/all?productCollection=LAPTOPS" },
+    { label: "MOBILE", to: "/product/all?productCollection=TELEPHONE" },
+    { label: "PC", to: "/product/all?productCollection=PC" },
+    { label: "ACCESSORIES", to: "/product/all?productCollection=ACCESSORIES" },
+    { label: "SMARTWATCHES", to: "/product/all?productCollection=SMARTWATCHES" },
+    { label: "LIMITED SALE", to: "/products?sale=true", highlight: true },
+    { label: "Best Seller", to: "/products?sort=best", highlight: true },
+    { label: "New Arrival", to: "/products?sort=new", highlight: true },
+  ];
+
+  const navLinks = [
+    { label: "Home", to: "/" },
+    { label: "Products", to: "/products" },
+    ...(authMember ? [{ label: "Orders", to: "/orders" }] : []),
+    ...(authMember ? [{ label: "My Page", to: "/member-page" }] : []),
+    { label: "Help", to: "/help" },
+  ];
+
+  return (
+    <>
+      {/* ── TOP INFO BAR ── */}
+      <Box
+        sx={{
+          background: "#04040d",
+          borderBottom: `1px solid ${BORDER}`,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ height: 36, px: { xs: 1, md: 0 } }}
+          >
+            <Stack direction="row" alignItems="center" gap={3}>
+              <Stack direction="row" alignItems="center" gap={0.7}>
+                <LocationOnOutlined sx={{ fontSize: 13, color: "rgba(255,255,255,0.35)" }} />
+                <Box sx={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                  123 Main Street, Anytown USA
+                </Box>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={0.7}
+                sx={{ display: { xs: "none", sm: "flex" } }}
+              >
+                <PhoneOutlined sx={{ fontSize: 13, color: "rgba(255,255,255,0.35)" }} />
+                <Box sx={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                  +82 (010) 5122-3111
+                </Box>
+              </Stack>
+            </Stack>
+
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              {[
+                { Icon: Facebook, href: "https://facebook.com", hoverColor: "#1877f2" },
+                { Icon: Twitter, href: "https://twitter.com", hoverColor: "#1da1f2" },
+                { Icon: Instagram, href: "https://instagram.com", hoverColor: "#e1306c" },
+              ].map(({ Icon, href, hoverColor }) => (
+                <IconButton
+                  key={href}
+                  size="small"
+                  component="a"
+                  href={href}
+                  target="_blank"
+                  sx={{
+                    color: "rgba(255,255,255,0.3)",
+                    p: 0.5,
+                    "&:hover": { color: hoverColor },
+                    transition: "color 0.2s",
+                  }}
+                >
+                  <Icon sx={{ fontSize: 15 }} />
+                </IconButton>
+              ))}
+            </Stack>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* ── MAIN NAVBAR ── */}
+      <Box
+        component="nav"
+        sx={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1200,
+          background: "rgba(8,8,20,0.92)",
+          backdropFilter: "blur(20px)",
+          borderBottom: `1px solid ${BORDER}`,
+          boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+          animation: "slideDown 0.5s ease both",
+          "@keyframes slideDown": {
+            from: { transform: "translateY(-100%)", opacity: 0 },
+            to: { transform: "translateY(0)", opacity: 1 },
+          },
+        }}
+      >
+        <Container maxWidth="xl">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ height: 68, gap: 2 }}
+          >
+            {/* Logo */}
+            <NavLink to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+              <Stack direction="row" alignItems="center" gap={0.8}>
+                <BoltOutlined
+                  sx={{
+                    color: BLUE,
+                    fontSize: 24,
+                    filter: `drop-shadow(0 0 6px ${BLUE}88)`,
+                  }}
+                />
+                <Stack direction="row" alignItems="baseline" gap={0}>
+                  <Box
+                    sx={{
+                      fontFamily: "'Orbitron', monospace",
+                      fontWeight: 900,
+                      fontSize: { xs: 16, md: 19 },
+                      background: "linear-gradient(135deg, #fff 40%, #2979FF)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    TECH
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "'Orbitron', monospace",
+                      fontWeight: 900,
+                      fontSize: { xs: 16, md: 19 },
+                      color: BLUE,
+                      letterSpacing: 1,
+                    }}
+                  >
+                    STORE
+                  </Box>
+                </Stack>
+              </Stack>
+            </NavLink>
+
+            {/* Search */}
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{
+                flex: 1,
+                maxWidth: 520,
+                display: { xs: "none", md: "flex" },
+                background: "rgba(255,255,255,0.05)",
+                border: `1px solid rgba(255,255,255,0.1)`,
+                borderRadius: "10px",
+                overflow: "hidden",
+                "&:focus-within": {
+                  border: `1px solid ${BLUE}`,
+                  background: "rgba(41,121,255,0.06)",
+                },
+                transition: "all 0.2s",
+              }}
+            >
+              <InputBase
+                placeholder="Search Products ..."
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+                sx={{
+                  flex: 1,
+                  px: 2,
+                  py: 0.9,
+                  fontSize: 14,
+                  color: "#fff",
+                  "& input::placeholder": { color: "rgba(255,255,255,0.3)" },
+                }}
+              />
+              <Box
+                sx={{
+                  background: BLUE,
+                  px: 2,
+                  py: 1.15,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  "&:hover": { background: BLUE_DARK },
+                  transition: "background 0.2s",
+                }}
+              >
+                <SearchOutlined sx={{ fontSize: 20, color: "#fff" }} />
+              </Box>
+            </Stack>
+
+            {/* Cart + User */}
+            <Stack direction="row" alignItems="center" gap={1}>
+              {/* Cart */}
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={1.5}
+                onClick={() => setCartOpen(true)}
+                sx={{
+                  cursor: "pointer",
+                  px: 2,
+                  py: 1,
+                  borderRadius: "10px",
+                  border: `1px solid rgba(255,255,255,0.08)`,
+                  background: "rgba(255,255,255,0.03)",
+                  "&:hover": {
+                    border: `1px solid ${BLUE}`,
+                    background: "rgba(41,121,255,0.08)",
+                  },
+                  transition: "all 0.2s",
+                }}
+              >
+                <Badge
+                  badgeContent={totalItems}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      background: BLUE,
+                      color: "#fff",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      minWidth: 18,
+                      height: 18,
+                    },
+                  }}
+                >
+                  <ShoppingCartOutlined sx={{ fontSize: 22, color: "rgba(255,255,255,0.75)" }} />
+                </Badge>
+                <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                  <Box sx={{ fontSize: 11, color: "rgba(255,255,255,0.35)", lineHeight: 1.2 }}>
+                    Cart
+                  </Box>
+                  <Box sx={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1.4 }}>
+                    ${totalPrice.toLocaleString()}
+                  </Box>
+                </Box>
+              </Stack>
+
+              <Box
+                sx={{
+                  width: 1,
+                  height: 32,
+                  background: BORDER,
+                  display: { xs: "none", sm: "block" },
+                }}
+              />
+
+              {!authMember ? (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  gap={1}
+                  onClick={() => setLoginOpen(true)}
+                  sx={{
+                    cursor: "pointer",
+                    px: 1.5,
+                    py: 1,
+                    borderRadius: "10px",
+                    display: { xs: "none", sm: "flex" },
+                    "&:hover": { background: "rgba(255,255,255,0.05)" },
+                    transition: "background 0.2s",
+                  }}
+                >
+                  <PersonOutlined sx={{ fontSize: 22, color: "rgba(255,255,255,0.7)" }} />
+                  <Box>
+                    <Box sx={{ fontSize: 11, color: "rgba(255,255,255,0.35)", lineHeight: 1.2 }}>
+                      User
+                    </Box>
+                    <Box sx={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1.4 }}>
+                      Account
+                    </Box>
+                  </Box>
+                </Stack>
+              ) : (
+                <Box
+                  component="img"
+                  src={
+                    authMember?.memberImage
+                      ? `${serverApi}/${authMember.memberImage}`
+                      : "/icons/default-user.svg"
+                  }
+                  onClick={handleLogOutClick}
+                  sx={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: "50%",
+                    border: `2px solid ${BLUE}`,
+                    cursor: "pointer",
+                    objectFit: "cover",
+                    "&:hover": { boxShadow: `0 0 0 3px ${BLUE}33` },
+                    transition: "all 0.2s",
+                  }}
+                />
+              )}
+
+              <IconButton
+                onClick={() => setMobileOpen(true)}
+                sx={{
+                  display: { xs: "flex", md: "none" },
+                  color: "rgba(255,255,255,0.7)",
+                }}
+              >
+                <MenuOutlined />
+              </IconButton>
+            </Stack>
+          </Stack>
+        </Container>
+
+        {/* ── CATEGORY BAR ── */}
+        <Box
+          sx={{
+            background: "rgba(41,121,255,0.12)",
+            borderTop: `1px solid ${BORDER}`,
+          }}
+        >
+          <Container maxWidth="xl">
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{
+                height: 42,
+                overflowX: "auto",
+                "&::-webkit-scrollbar": { display: "none" },
+              }}
+            >
+              {categoryLinks.map((cat, i) => (
+                <NavLink
+                  key={i}
+                  to={cat.to}
+                  style={{ textDecoration: "none", flexShrink: 0 }}
+                >
+                  <Box
+                    sx={{
+                      px: 2.5,
+                      height: 42,
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: 13,
+                      fontWeight: cat.highlight ? 700 : 500,
+                      color: cat.highlight
+                        ? BLUE
+                        : isActive(cat.to)
+                        ? "#fff"
+                        : "rgba(255,255,255,0.6)",
+                      borderRight:
+                        i < categoryLinks.length - 1
+                          ? `1px solid ${BORDER}`
+                          : "none",
+                      background: isActive(cat.to)
+                        ? "rgba(41,121,255,0.15)"
+                        : "transparent",
+                      transition: "all 0.2s",
+                      "&:hover": {
+                        background: "rgba(41,121,255,0.12)",
+                        color: "#fff",
+                      },
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {i === 0 && <MenuOutlined sx={{ fontSize: 16, mr: 1, color: "rgba(255,255,255,0.5)" }} />}
+                    {cat.label}
+                  </Box>
+                </NavLink>
+              ))}
+            </Stack>
+          </Container>
+        </Box>
+      </Box>
+
+      {/* ── HERO SECTION ── */}
+      <Box
+        sx={{
+          position: "relative",
+          minHeight: { xs: 380, md: 500 },
+          overflow: "hidden",
+          background: BG,
+        }}
+      >
+      <Box
+  component="img"
+  src="/img/image.png"
+  alt="Hero background"
+  sx={{
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    objectPosition: "center",
+    opacity: 0.55,
+  }}
+/>
+
+        {/* Dark overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to right, rgba(8,8,20,0.97) 0%, rgba(8,8,20,0.85) 40%, rgba(8,8,20,0.4) 70%, rgba(8,8,20,0.1) 100%)",
+          }}
+        />
+
+        {/* Grid pattern */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage:
+              "linear-gradient(rgba(41,121,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(41,121,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+
+        <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1 }}>
+          <Stack
+            justifyContent="center"
+            sx={{ minHeight: { xs: 380, md: 500 }, maxWidth: 580, py: 6 }}
+          >
+            <Box
+              sx={{
+                display: "inline-block",
+                px: 2,
+                py: 0.5,
+                mb: 2.5,
+                borderRadius: "20px",
+                background: "rgba(41,121,255,0.1)",
+                border: `1px solid rgba(41,121,255,0.3)`,
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#60a5fa",
+                letterSpacing: 1,
+                textTransform: "uppercase",
+                width: "fit-content",
+                animation: "fadeUp 0.5s 0.1s ease both",
+                "@keyframes fadeUp": {
+                  from: { opacity: 0, transform: "translateY(16px)" },
+                  to: { opacity: 1, transform: "translateY(0)" },
+                },
+              }}
+            >
+              New Arrivals 2026
+            </Box>
+
+            <Box
+              sx={{
+                fontSize: { xs: 32, md: 50, lg: 58 },
+                fontWeight: 900,
+                color: "#fff",
+                lineHeight: 1.1,
+                mb: 2.5,
+                fontFamily: "'Orbitron', monospace",
+                animation: "fadeUp 0.5s 0.2s ease both",
+                letterSpacing: -1,
+              }}
+            >
+              Your One-Stop{" "}
+              <Box component="span" sx={{ color: BLUE, display: "block" }}>
+                Electronic Market
+              </Box>
+            </Box>
+
+            <Box
+              sx={{
+                fontSize: { xs: 14, md: 16 },
+                color: "rgba(255,255,255,0.5)",
+                mb: 4,
+                lineHeight: 1.7,
+                maxWidth: 420,
+                animation: "fadeUp 0.5s 0.3s ease both",
+              }}
+            >
+              Welcome to TechStore, a place where you can buy everything about
+              electronics. Sale every day!
+            </Box>
+
+            <Stack
+              direction="row"
+              gap={2}
+              sx={{ animation: "fadeUp 0.5s 0.4s ease both" }}
+            >
+              <NavLink to="/products" style={{ textDecoration: "none" }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    background: BLUE,
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: 15,
+                    px: 4,
+                    py: 1.4,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    boxShadow: `0 8px 32px ${BLUE}44`,
+                    "&:hover": {
+                      background: BLUE_DARK,
+                      transform: "translateY(-2px)",
+                      boxShadow: `0 12px 40px ${BLUE}55`,
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  Shop Now
+                </Button>
+              </NavLink>
+              {!authMember && (
+                <Button
+                  onClick={() => setSignUpOpen(true)}
+                  sx={{
+                    color: "rgba(255,255,255,0.75)",
+                    border: "1.5px solid rgba(255,255,255,0.15)",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    px: 4,
+                    py: 1.4,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    "&:hover": {
+                      borderColor: BLUE,
+                      color: BLUE,
+                      background: "rgba(41,121,255,0.06)",
+                    },
+                    transition: "all 0.2s",
+                  }}
+                >
+                  Sign Up
+                </Button>
+              )}
+            </Stack>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* ── STATISTICS BAR ── */}
+      <Box
+        sx={{
+          background: BG2,
+          borderTop: `1px solid ${BORDER}`,
+          borderBottom: `1px solid ${BORDER}`,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Stack direction={{ xs: "column", sm: "row" }}>
+            {[
+              {
+                Icon: HeadsetMicOutlined,
+                title: "Responsive",
+                sub: "Customer service available 24/7",
+              },
+              {
+                Icon: VerifiedUserOutlined,
+                title: "Secure",
+                sub: "Certified marketplace since 2017",
+              },
+              {
+                Icon: LocalShippingOutlined,
+                title: "Shipping",
+                sub: "Free, fast, and reliable worldwide",
+              },
+              {
+                Icon: AssignmentReturnOutlined,
+                title: "Transparent",
+                sub: "Hassle-free return policy",
+              },
+            ].map((item, i, arr) => (
+              <Stack
+                key={i}
+                direction="row"
+                alignItems="center"
+                gap={2}
+                sx={{
+                  flex: 1,
+                  py: 3,
+                  px: { xs: 3, md: 4 },
+                  borderRight: {
+                    sm: i < arr.length - 1 ? `1px solid ${BORDER}` : "none",
+                  },
+                  borderBottom: {
+                    xs: i < arr.length - 1 ? `1px solid ${BORDER}` : "none",
+                    sm: "none",
+                  },
+                  "&:hover": { background: "rgba(41,121,255,0.05)" },
+                  transition: "background 0.2s",
+                }}
+              >
+                <item.Icon sx={{ fontSize: 34, color: BLUE, flexShrink: 0 }} />
+                <Box>
+                  <Box
+                    sx={{
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: "#fff",
+                      mb: 0.2,
+                    }}
+                  >
+                    {item.title}
+                  </Box>
+                  <Box sx={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+                    {item.sub}
+                  </Box>
+                </Box>
+              </Stack>
+            ))}
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* ── CART DRAWER ── */}
+      <Drawer
+        anchor="right"
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        PaperProps={{
+          sx: {
+            width: { xs: "100vw", sm: 400 },
+            background: BG2,
+            borderLeft: `1px solid ${BORDER}`,
+          },
+        }}
+      >
+        <Stack sx={{ height: "100%", p: 3 }} direction="column">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={2}
+          >
+            <Box
+              sx={{
+                fontSize: 18,
+                fontWeight: 700,
+                color: "#fff",
+                fontFamily: "'Orbitron', monospace",
+              }}
+            >
+              Cart ({totalItems})
+            </Box>
+            <IconButton
+              onClick={() => setCartOpen(false)}
+              sx={{ color: "rgba(255,255,255,0.5)" }}
+            >
+              <CloseOutlined />
+            </IconButton>
+          </Stack>
+          <Divider sx={{ borderColor: BORDER, mb: 2 }} />
+
+          <Box sx={{ flex: 1, overflowY: "auto" }}>
+            {cartItems.length === 0 ? (
+              <Stack
+                alignItems="center"
+                justifyContent="center"
+                sx={{ height: 200 }}
+              >
+                <ShoppingCartOutlined
+                  sx={{ fontSize: 48, color: "rgba(255,255,255,0.1)", mb: 2 }}
+                />
+                <Box sx={{ color: "rgba(255,255,255,0.3)", fontSize: 15 }}>
+                  Cart is empty
+                </Box>
+              </Stack>
+            ) : (
+              cartItems.map((item) => (
+                <Stack
+                  key={item._id}
+                  direction="row"
+                  gap={2}
+                  sx={{
+                    mb: 2,
+                    p: 1.5,
+                    borderRadius: "12px",
+                    border: `1px solid rgba(255,255,255,0.06)`,
+                    background: "rgba(255,255,255,0.03)",
+                    "&:hover": { border: `1px solid ${BLUE}44` },
+                    transition: "border-color 0.2s",
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={
+                      item.image
+                        ? `${serverApi}/${item.image}`
+                        : "/icons/default-product.svg"
+                    }
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: "8px",
+                      objectFit: "cover",
+                      background: BG3,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#fff",
+                        mb: 0.3,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.name}
+                    </Box>
+                    <Box
+                      sx={{ fontSize: 14, fontWeight: 700, color: BLUE }}
+                    >
+                      ${(item.price * item.quantity).toLocaleString()}
+                    </Box>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      gap={1}
+                      mt={0.8}
+                    >
+                      <IconButton
+                        size="small"
+                        onClick={() => onRemove(item)}
+                        sx={{
+                          border: `1px solid rgba(255,255,255,0.1)`,
+                          borderRadius: "6px",
+                          p: 0.3,
+                          color: "rgba(255,255,255,0.5)",
+                          "&:hover": { borderColor: BLUE, color: BLUE },
+                        }}
+                      >
+                        <RemoveOutlined sx={{ fontSize: 14 }} />
+                      </IconButton>
+                      <Box
+                        sx={{
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: "#fff",
+                          minWidth: 20,
+                          textAlign: "center",
+                        }}
+                      >
+                        {item.quantity}
+                      </Box>
+                      <IconButton
+                        size="small"
+                        onClick={() => onAdd(item)}
+                        sx={{
+                          border: `1px solid rgba(255,255,255,0.1)`,
+                          borderRadius: "6px",
+                          p: 0.3,
+                          color: "rgba(255,255,255,0.5)",
+                          "&:hover": { borderColor: BLUE, color: BLUE },
+                        }}
+                      >
+                        <AddOutlined sx={{ fontSize: 14 }} />
+                      </IconButton>
+                    </Stack>
+                  </Box>
+                  <IconButton
+                    size="small"
+                    onClick={() => onDelete(item)}
+                    sx={{
+                      color: "rgba(255,255,255,0.2)",
+                      alignSelf: "flex-start",
+                      "&:hover": { color: "#ef4444" },
+                    }}
+                  >
+                    <DeleteOutlineOutlined sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Stack>
+              ))
+            )}
+          </Box>
+
+          {cartItems.length > 0 && (
+            <Box>
+              <Divider sx={{ borderColor: BORDER, mb: 2 }} />
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
+                <Box sx={{ fontSize: 15, color: "rgba(255,255,255,0.5)" }}>
+                  Total
+                </Box>
+                <Box sx={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>
+                  ${totalPrice.toLocaleString()}
+                </Box>
+              </Stack>
+              <Stack gap={1.5}>
+                <NavLink
+                  to="/orders"
+                  style={{ textDecoration: "none" }}
+                  onClick={() => setCartOpen(false)}
+                >
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      background: BLUE,
+                      color: "#fff",
+                      fontWeight: 700,
+                      py: 1.4,
+                      borderRadius: "10px",
+                      textTransform: "none",
+                      fontSize: 15,
+                      boxShadow: `0 8px 24px ${BLUE}33`,
+                      "&:hover": { background: BLUE_DARK },
+                    }}
+                  >
+                    Checkout
+                  </Button>
+                </NavLink>
+                <Button
+                  fullWidth
+                  onClick={onDeleteAll}
+                  sx={{
+                    color: "rgba(255,255,255,0.35)",
+                    border: `1px solid rgba(255,255,255,0.08)`,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    py: 1,
+                    fontSize: 13,
+                    "&:hover": { borderColor: "#ef4444", color: "#ef4444" },
+                  }}
+                >
+                  Clear All
+                </Button>
+              </Stack>
+            </Box>
+          )}
+        </Stack>
+      </Drawer>
+
+      {/* ── MOBILE DRAWER ── */}
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        PaperProps={{
+          sx: {
+            width: 280,
+            background: BG2,
+            borderRight: `1px solid ${BORDER}`,
+            p: 0,
+          },
+        }}
+      >
+        <Stack sx={{ height: "100%" }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ px: 2.5, py: 2, borderBottom: `1px solid ${BORDER}` }}
+          >
+            <Stack direction="row" alignItems="center" gap={0.7}>
+              <BoltOutlined sx={{ color: BLUE, fontSize: 20 }} />
+              <Box
+                sx={{
+                  fontFamily: "'Orbitron', monospace",
+                  fontWeight: 900,
+                  fontSize: 16,
+                  background: "linear-gradient(135deg, #fff 40%, #2979FF)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                TECHSTORE
+              </Box>
+            </Stack>
+            <IconButton
+              onClick={() => setMobileOpen(false)}
+              sx={{ color: "rgba(255,255,255,0.5)" }}
+            >
+              <CloseOutlined />
+            </IconButton>
+          </Stack>
+
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              mx: 2,
+              my: 1.5,
+              background: "rgba(255,255,255,0.05)",
+              border: `1px solid rgba(255,255,255,0.08)`,
+              borderRadius: "8px",
+              overflow: "hidden",
+            }}
+          >
+            <InputBase
+              placeholder="Search..."
+              sx={{
+                flex: 1,
+                px: 2,
+                py: 0.8,
+                fontSize: 14,
+                color: "#fff",
+                "& input::placeholder": { color: "rgba(255,255,255,0.3)" },
+              }}
+            />
+            <Box sx={{ px: 1.5, display: "flex", color: "rgba(255,255,255,0.3)" }}>
+              <SearchOutlined sx={{ fontSize: 20 }} />
+            </Box>
+          </Stack>
+
+          <Box sx={{ flex: 1, overflowY: "auto" }}>
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                style={{ textDecoration: "none" }}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Box
+                  sx={{
+                    px: 2.5,
+                    py: 1.4,
+                    fontSize: 15,
+                    fontWeight: isActive(link.to) ? 700 : 500,
+                    color: isActive(link.to) ? BLUE : "rgba(255,255,255,0.65)",
+                    background: isActive(link.to)
+                      ? "rgba(41,121,255,0.1)"
+                      : "transparent",
+                    borderLeft: isActive(link.to)
+                      ? `3px solid ${BLUE}`
+                      : "3px solid transparent",
+                    borderBottom: `1px solid rgba(255,255,255,0.05)`,
+                    transition: "all 0.15s",
+                    "&:hover": {
+                      background: "rgba(41,121,255,0.08)",
+                      color: BLUE,
+                    },
+                  }}
+                >
+                  {link.label}
+                </Box>
+              </NavLink>
+            ))}
+
+            <Divider sx={{ borderColor: BORDER, my: 1 }} />
+
+            {categoryLinks.map((cat, i) => (
+              <NavLink
+                key={i}
+                to={cat.to}
+                style={{ textDecoration: "none" }}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Box
+                  sx={{
+                    px: 2.5,
+                    py: 1.2,
+                    fontSize: 14,
+                    fontWeight: cat.highlight ? 700 : 400,
+                    color: cat.highlight ? BLUE : "rgba(255,255,255,0.5)",
+                    borderBottom: `1px solid rgba(255,255,255,0.04)`,
+                    "&:hover": { background: "rgba(255,255,255,0.03)" },
+                  }}
+                >
+                  {cat.label}
+                </Box>
+              </NavLink>
+            ))}
+          </Box>
+
+          <Box sx={{ p: 2.5, borderTop: `1px solid ${BORDER}` }}>
+            {!authMember ? (
+              <Stack gap={1.2}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={() => { setLoginOpen(true); setMobileOpen(false); }}
+                  sx={{
+                    background: BLUE,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    borderRadius: "10px",
+                    py: 1.2,
+                    "&:hover": { background: BLUE_DARK },
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  fullWidth
+                  onClick={() => { setSignUpOpen(true); setMobileOpen(false); }}
+                  sx={{
+                    color: "rgba(255,255,255,0.7)",
+                    border: `1.5px solid rgba(255,255,255,0.15)`,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    borderRadius: "10px",
+                    py: 1.2,
+                    "&:hover": { borderColor: BLUE, color: BLUE },
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </Stack>
+            ) : (
+              <Button
+                fullWidth
+                onClick={() => setMobileOpen(false)}
+                sx={{
+                  border: `1px solid ${BORDER}`,
+                  color: "rgba(255,255,255,0.6)",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: "10px",
+                }}
+              >
+                My Profile
+              </Button>
+            )}
+          </Box>
+        </Stack>
+      </Drawer>
+
+      {/* ── LOGOUT MENU ── */}
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={Boolean(anchorEl)}
+        onClose={handleCloseLogout}
+        onClick={handleCloseLogout}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            background: BG2,
+            border: `1px solid ${BORDER}`,
+            borderRadius: "12px",
+            overflow: "visible",
+            mt: 1.5,
+            minWidth: 140,
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: BG2,
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+              borderLeft: `1px solid ${BORDER}`,
+              borderTop: `1px solid ${BORDER}`,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <MenuItem
+          onClick={handleLogoutRequest}
+          sx={{
+            fontSize: 14,
+            color: "rgba(255,255,255,0.75)",
+            px: 2.5,
+            py: 1.2,
+            "&:hover": { background: "rgba(239,68,68,0.08)", color: "#ef4444" },
+          }}
+        >
+          <ListItemIcon>
+            <Logout fontSize="small" sx={{ color: "inherit" }} />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
+    </>
+  );
+}
