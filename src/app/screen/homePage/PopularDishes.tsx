@@ -24,12 +24,6 @@ import { serverApi } from "../../../lib/config";
 const popularDishesRetriever = createSelector(
   retrivePopularDishes, 
   (popularDishes) => ({popularDishes}))
-
-
-
-
-
-
 export default function PopularDishes() {
   const {popularDishes} = useSelector(popularDishesRetriever);
   //console.log("popularDishes:", popularDishes)

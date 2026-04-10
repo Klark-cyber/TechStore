@@ -1,0 +1,18 @@
+.static-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Orqa fonda kichik yulduzcha/nuqtachalar effekti */
+.static-frame::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transform: rotate(15deg);
+  pointer-events: none;
+}

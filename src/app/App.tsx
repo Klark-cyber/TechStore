@@ -10,6 +10,8 @@ import  HomeNavbar  from "./components/headers/HomeNavbar";
 import  OtherNavbar from "./components/headers/OtherNavbar";
 import  Footer  from "./components/footer";
 import  HelpPage  from "./screen/helpPage";
+import "../css/events.css";
+import "../css/statistics.css";
 import "../css/app.css";
 import "../css/navbar.css" //css ichidan navbar.css ni chaqirdik uning ichida home-navbarga tgeishli css lar bor
 import "../css/footer.css" ///footerga oid cssni import qildik
