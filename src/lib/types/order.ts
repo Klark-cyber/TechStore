@@ -1,19 +1,20 @@
+import { ObjectId } from "mongoose"
 import { OrderStatus } from "../enums/order.enum";
 import { Product } from "./product";
 
 export interface OrderItemInput { //Postman orqali kirib kelgan req.body
     itemQuantity: number;
     itemPrice: number;
-    productId: string;
-    orderId?: string;   //frontenddan kelmaydi ozimiz hosil qilamiz.Shu saabli optional qilib belgiladik
+    productId: ObjectId;
+    orderId?: ObjectId;   //frontenddan kelmaydi ozimiz hosil qilamiz.Shu saabli optional qilib belgiladik
 }
 
 export interface Order { //schemadan kelgan return Prommise
-    _id: string;
+    _id: ObjectId;
     orderTotal: number;
     orderDelivery: number;
     orderStatus: OrderStatus;  //enum
-    memberId: string;
+    memberId: ObjectId;
     createdAt: Date;
     updatedAt: Date;
     // from aggregations
@@ -22,11 +23,11 @@ export interface Order { //schemadan kelgan return Prommise
 }
 
 export interface OrederItem { 
-    _id: string;
+    _id: ObjectId;
     itemQuantity: number;
     itemPrice: number;
-    orderId: string;
-    productId: string;
+    orderId: ObjectId;
+    productId: ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

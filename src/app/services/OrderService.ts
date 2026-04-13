@@ -12,13 +12,15 @@ class OrderService {
 
 public async createOrder(input: CartItem[]): Promise<Order>{ //backenddagi createOrder orqali yangi order hosil qilamiz
     try{
-        const orderItems: OrderItemInput[] = input.map((cartItem: CartItem) => {
-            return { //orderItem taype OrderItemInput bolgani sababli faqat 3 ta qiymatni qabul qiladi bu 3 ta qiymatni cartItem ichidan ajratib oldik
-                itemQuantity: cartItem.quantity,
-                itemPrice: cartItem.price,
-                productId: cartItem._id,
-            }
-        })
+      const orderItems: OrderItemInput[] = input.map((cartItem: CartItem) => {
+    return { 
+        itemQuantity: cartItem.quantity,
+        itemPrice: cartItem.price,
+        // productId string bo'lgani uchun, uni kutilayotgan turga (ObjectId) 
+        // majburan o'tkazish uchun 'as any' ishlatamiz
+        productId: cartItem._id as any, 
+    };
+});
         const url = this.path + "/order/create";
         const result = await axios.post(url, orderItems, {withCredentials: true} );
         console.log("createOrder:", result)

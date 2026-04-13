@@ -1,4 +1,17 @@
-import {Box,Button,Container,ListItemIcon,Menu,MenuItem,Stack,Badge,Drawer,IconButton,Divider,InputBase,} from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Stack,
+  Badge,
+  Drawer,
+  IconButton,
+  Divider,
+  InputBase,
+} from "@mui/material";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { CartItem } from "../../../lib/types/search";
@@ -25,6 +38,7 @@ import {
   AssignmentReturnOutlined,
   BoltOutlined,
 } from "@mui/icons-material";
+import React from "react";
 
 interface HomeNavbarProps {
   cartItems: CartItem[];
@@ -78,11 +92,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
 
   const categoryLinks = [
     { label: "All Categories", to: "/products" },
-    { label: "LAPTOPS", to: "/product/all?productCollection=LAPTOPS" },
-    { label: "MOBILE", to: "/product/all?productCollection=TELEPHONE" },
-    { label: "PC", to: "/product/all?productCollection=PC" },
-    { label: "ACCESSORIES", to: "/product/all?productCollection=ACCESSORIES" },
-    { label: "SMARTWATCHES", to: "/product/all?productCollection=SMARTWATCHES" },
+    { label: "Laptops", to: "/products?productCollection=LAPTOPS" },
+    { label: "PC", to: "/products?productCollection=PC" },
+    { label: "Mobile", to: "/products?productCollection=TELEPHONE" },
+    { label: "MacBooks", to: "/products?productCollection=MACBOOKS" },
+    { label: "Accessories", to: "/products?productCollection=ACCESSORIES" },
+    { label: "Smartwatches", to: "/products?productCollection=SMARTWATCHES" },
+    { label: "Others", to: "/products?productCollection=OTHERS" },
     { label: "LIMITED SALE", to: "/products?sale=true", highlight: true },
     { label: "Best Seller", to: "/products?sort=best", highlight: true },
     { label: "New Arrival", to: "/products?sort=new", highlight: true },
@@ -99,12 +115,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
   return (
     <>
       {/* ── TOP INFO BAR ── */}
-      <Box
-        sx={{
-          background: "#04040d",
-          borderBottom: `1px solid ${BORDER}`,
-        }}
-      >
+      <Box sx={{ background: "#04040d", borderBottom: `1px solid ${BORDER}` }}>
         <Container maxWidth="xl">
           <Stack
             direction="row"
@@ -166,7 +177,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
           position: "sticky",
           top: 0,
           zIndex: 1200,
-          background: "rgba(8,8,20,0.92)",
+          background: "rgba(8,8,20,0.95)",
           backdropFilter: "blur(20px)",
           borderBottom: `1px solid ${BORDER}`,
           boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
@@ -194,7 +205,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     filter: `drop-shadow(0 0 6px ${BLUE}88)`,
                   }}
                 />
-                <Stack direction="row" alignItems="baseline" gap={0}>
+                <Stack direction="row" alignItems="baseline">
                   <Box
                     sx={{
                       fontFamily: "'Orbitron', monospace",
@@ -223,13 +234,53 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               </Stack>
             </NavLink>
 
+            {/* Desktop nav links */}
+            <Stack
+              direction="row"
+              gap={0.5}
+              sx={{ display: { xs: "none", lg: "flex" } }}
+            >
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Box
+                    sx={{
+                      px: 1.8,
+                      py: 0.8,
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: isActive(link.to) ? BLUE : "rgba(255,255,255,0.65)",
+                      borderBottom: isActive(link.to)
+                        ? `2px solid ${BLUE}`
+                        : "2px solid transparent",
+                      borderRadius: isActive(link.to) ? "6px 6px 0 0" : "6px",
+                      background: isActive(link.to)
+                        ? "rgba(41,121,255,0.08)"
+                        : "transparent",
+                      transition: "all 0.25s ease",
+                      whiteSpace: "nowrap",
+                      "&:hover": {
+                        color: BLUE,
+                        background: "rgba(41,121,255,0.08)",
+                      },
+                    }}
+                  >
+                    {link.label}
+                  </Box>
+                </NavLink>
+              ))}
+            </Stack>
+
             {/* Search */}
             <Stack
               direction="row"
               alignItems="center"
               sx={{
                 flex: 1,
-                maxWidth: 520,
+                maxWidth: 380,
                 display: { xs: "none", md: "flex" },
                 background: "rgba(255,255,255,0.05)",
                 border: `1px solid rgba(255,255,255,0.1)`,
@@ -258,7 +309,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               <Box
                 sx={{
                   background: BLUE,
-                  px: 2,
+                  px: 1.8,
                   py: 1.15,
                   cursor: "pointer",
                   display: "flex",
@@ -267,13 +318,12 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   transition: "background 0.2s",
                 }}
               >
-                <SearchOutlined sx={{ fontSize: 20, color: "#fff" }} />
+                <SearchOutlined sx={{ fontSize: 18, color: "#fff" }} />
               </Box>
             </Stack>
 
             {/* Cart + User */}
             <Stack direction="row" alignItems="center" gap={1}>
-              {/* Cart */}
               <Stack
                 direction="row"
                 alignItems="center"
@@ -306,7 +356,9 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     },
                   }}
                 >
-                  <ShoppingCartOutlined sx={{ fontSize: 22, color: "rgba(255,255,255,0.75)" }} />
+                  <ShoppingCartOutlined
+                    sx={{ fontSize: 22, color: "rgba(255,255,255,0.75)" }}
+                  />
                 </Badge>
                 <Box sx={{ display: { xs: "none", sm: "block" } }}>
                   <Box sx={{ fontSize: 11, color: "rgba(255,255,255,0.35)", lineHeight: 1.2 }}>
@@ -378,7 +430,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               <IconButton
                 onClick={() => setMobileOpen(true)}
                 sx={{
-                  display: { xs: "flex", md: "none" },
+                  display: { xs: "flex", lg: "none" },
                   color: "rgba(255,255,255,0.7)",
                 }}
               >
@@ -389,12 +441,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         </Container>
 
         {/* ── CATEGORY BAR ── */}
-        <Box
-          sx={{
-            background: "rgba(41,121,255,0.12)",
-            borderTop: `1px solid ${BORDER}`,
-          }}
-        >
+        <Box sx={{ background: "rgba(41,121,255,0.1)", borderTop: `1px solid ${BORDER}` }}>
           <Container maxWidth="xl">
             <Stack
               direction="row"
@@ -413,17 +460,17 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 >
                   <Box
                     sx={{
-                      px: 2.5,
+                      px: 2,
                       height: 42,
                       display: "flex",
                       alignItems: "center",
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: cat.highlight ? 700 : 500,
                       color: cat.highlight
                         ? BLUE
                         : isActive(cat.to)
                         ? "#fff"
-                        : "rgba(255,255,255,0.6)",
+                        : "rgba(255,255,255,0.55)",
                       borderRight:
                         i < categoryLinks.length - 1
                           ? `1px solid ${BORDER}`
@@ -439,7 +486,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {i === 0 && <MenuOutlined sx={{ fontSize: 16, mr: 1, color: "rgba(255,255,255,0.5)" }} />}
+                    {i === 0 && (
+                      <MenuOutlined
+                        sx={{ fontSize: 15, mr: 0.8, color: "rgba(255,255,255,0.5)" }}
+                      />
+                    )}
                     {cat.label}
                   </Box>
                 </NavLink>
@@ -458,22 +509,20 @@ export default function HomeNavbar(props: HomeNavbarProps) {
           background: BG,
         }}
       >
-      <Box
-  component="img"
-  src="/img/image.png"
-  alt="Hero background"
-  sx={{
-    position: "absolute",
-    inset: 0,
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    objectPosition: "center",
-    opacity: 0.55,
-  }}
-/>
-
-        {/* Dark overlay */}
+        <Box
+          component="img"
+          src="/img/image.png"
+          alt="Hero background"
+          sx={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            opacity: 0.55,
+          }}
+        />
         <Box
           sx={{
             position: "absolute",
@@ -482,8 +531,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               "linear-gradient(to right, rgba(8,8,20,0.97) 0%, rgba(8,8,20,0.85) 40%, rgba(8,8,20,0.4) 70%, rgba(8,8,20,0.1) 100%)",
           }}
         />
-
-        {/* Grid pattern */}
         <Box
           sx={{
             position: "absolute",
@@ -552,15 +599,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 animation: "fadeUp 0.5s 0.3s ease both",
               }}
             >
-              Welcome to TechStore, a place where you can buy everything about
-              electronics. Sale every day!
+              Welcome to TechStore — premium electronics at your fingertips.
+              Fast delivery, 2-year warranty, 24/7 expert support.
             </Box>
 
-            <Stack
-              direction="row"
-              gap={2}
-              sx={{ animation: "fadeUp 0.5s 0.4s ease both" }}
-            >
+            <Stack direction="row" gap={2} sx={{ animation: "fadeUp 0.5s 0.4s ease both" }}>
               <NavLink to="/products" style={{ textDecoration: "none" }}>
                 <Button
                   variant="contained"
@@ -577,7 +620,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     "&:hover": {
                       background: BLUE_DARK,
                       transform: "translateY(-2px)",
-                      boxShadow: `0 12px 40px ${BLUE}55`,
                     },
                     transition: "all 0.2s",
                   }}
@@ -624,26 +666,10 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         <Container maxWidth="xl">
           <Stack direction={{ xs: "column", sm: "row" }}>
             {[
-              {
-                Icon: HeadsetMicOutlined,
-                title: "Responsive",
-                sub: "Customer service available 24/7",
-              },
-              {
-                Icon: VerifiedUserOutlined,
-                title: "Secure",
-                sub: "Certified marketplace since 2017",
-              },
-              {
-                Icon: LocalShippingOutlined,
-                title: "Shipping",
-                sub: "Free, fast, and reliable worldwide",
-              },
-              {
-                Icon: AssignmentReturnOutlined,
-                title: "Transparent",
-                sub: "Hassle-free return policy",
-              },
+              { Icon: HeadsetMicOutlined, title: "Responsive", sub: "Customer service available 24/7" },
+              { Icon: VerifiedUserOutlined, title: "Secure", sub: "Certified marketplace since 2017" },
+              { Icon: LocalShippingOutlined, title: "Shipping", sub: "Free, fast, and reliable worldwide" },
+              { Icon: AssignmentReturnOutlined, title: "Transparent", sub: "Hassle-free return policy" },
             ].map((item, i, arr) => (
               <Stack
                 key={i}
@@ -654,32 +680,18 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   flex: 1,
                   py: 3,
                   px: { xs: 3, md: 4 },
-                  borderRight: {
-                    sm: i < arr.length - 1 ? `1px solid ${BORDER}` : "none",
-                  },
-                  borderBottom: {
-                    xs: i < arr.length - 1 ? `1px solid ${BORDER}` : "none",
-                    sm: "none",
-                  },
+                  borderRight: { sm: i < arr.length - 1 ? `1px solid ${BORDER}` : "none" },
+                  borderBottom: { xs: i < arr.length - 1 ? `1px solid ${BORDER}` : "none", sm: "none" },
                   "&:hover": { background: "rgba(41,121,255,0.05)" },
                   transition: "background 0.2s",
                 }}
               >
                 <item.Icon sx={{ fontSize: 34, color: BLUE, flexShrink: 0 }} />
                 <Box>
-                  <Box
-                    sx={{
-                      fontSize: 15,
-                      fontWeight: 700,
-                      color: "#fff",
-                      mb: 0.2,
-                    }}
-                  >
+                  <Box sx={{ fontSize: 15, fontWeight: 700, color: "#fff", mb: 0.2 }}>
                     {item.title}
                   </Box>
-                  <Box sx={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
-                    {item.sub}
-                  </Box>
+                  <Box sx={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>{item.sub}</Box>
                 </Box>
               </Stack>
             ))}
@@ -692,6 +704,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         anchor="right"
         open={cartOpen}
         onClose={() => setCartOpen(false)}
+        sx={{ zIndex: 1500 }}
         PaperProps={{
           sx: {
             width: { xs: "100vw", sm: 400 },
@@ -701,26 +714,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         }}
       >
         <Stack sx={{ height: "100%", p: 3 }} direction="column">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={2}
-          >
-            <Box
-              sx={{
-                fontSize: 18,
-                fontWeight: 700,
-                color: "#fff",
-                fontFamily: "'Orbitron', monospace",
-              }}
-            >
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+            <Box sx={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "'Orbitron', monospace" }}>
               Cart ({totalItems})
             </Box>
-            <IconButton
-              onClick={() => setCartOpen(false)}
-              sx={{ color: "rgba(255,255,255,0.5)" }}
-            >
+            <IconButton onClick={() => setCartOpen(false)} sx={{ color: "rgba(255,255,255,0.5)" }}>
               <CloseOutlined />
             </IconButton>
           </Stack>
@@ -728,17 +726,9 @@ export default function HomeNavbar(props: HomeNavbarProps) {
 
           <Box sx={{ flex: 1, overflowY: "auto" }}>
             {cartItems.length === 0 ? (
-              <Stack
-                alignItems="center"
-                justifyContent="center"
-                sx={{ height: 200 }}
-              >
-                <ShoppingCartOutlined
-                  sx={{ fontSize: 48, color: "rgba(255,255,255,0.1)", mb: 2 }}
-                />
-                <Box sx={{ color: "rgba(255,255,255,0.3)", fontSize: 15 }}>
-                  Cart is empty
-                </Box>
+              <Stack alignItems="center" justifyContent="center" sx={{ height: 200 }}>
+                <ShoppingCartOutlined sx={{ fontSize: 48, color: "rgba(255,255,255,0.1)", mb: 2 }} />
+                <Box sx={{ color: "rgba(255,255,255,0.3)", fontSize: 15 }}>Cart is empty</Box>
               </Stack>
             ) : (
               cartItems.map((item) => (
@@ -758,79 +748,34 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 >
                   <Box
                     component="img"
-                    src={
-                      item.image
-                        ? `${serverApi}/${item.image}`
-                        : "/icons/default-product.svg"
-                    }
+                    src={item.image ? `${serverApi}/${item.image}` : "/icons/default-product.svg"}
                     sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: "8px",
-                      objectFit: "cover",
-                      background: BG3,
-                      flexShrink: 0,
+                      width: 64, height: 64, borderRadius: "8px",
+                      objectFit: "cover", background: BG3, flexShrink: 0,
                     }}
                   />
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Box
-                      sx={{
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: "#fff",
-                        mb: 0.3,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                    <Box sx={{ fontSize: 14, fontWeight: 600, color: "#fff", mb: 0.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {item.name}
                     </Box>
-                    <Box
-                      sx={{ fontSize: 14, fontWeight: 700, color: BLUE }}
-                    >
+                    <Box sx={{ fontSize: 14, fontWeight: 700, color: BLUE }}>
                       ${(item.price * item.quantity).toLocaleString()}
                     </Box>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      gap={1}
-                      mt={0.8}
-                    >
+                    <Stack direction="row" alignItems="center" gap={1} mt={0.8}>
                       <IconButton
                         size="small"
                         onClick={() => onRemove(item)}
-                        sx={{
-                          border: `1px solid rgba(255,255,255,0.1)`,
-                          borderRadius: "6px",
-                          p: 0.3,
-                          color: "rgba(255,255,255,0.5)",
-                          "&:hover": { borderColor: BLUE, color: BLUE },
-                        }}
+                        sx={{ border: `1px solid rgba(255,255,255,0.1)`, borderRadius: "6px", p: 0.3, color: "rgba(255,255,255,0.5)", "&:hover": { borderColor: BLUE, color: BLUE } }}
                       >
                         <RemoveOutlined sx={{ fontSize: 14 }} />
                       </IconButton>
-                      <Box
-                        sx={{
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: "#fff",
-                          minWidth: 20,
-                          textAlign: "center",
-                        }}
-                      >
+                      <Box sx={{ fontSize: 14, fontWeight: 600, color: "#fff", minWidth: 20, textAlign: "center" }}>
                         {item.quantity}
                       </Box>
                       <IconButton
                         size="small"
                         onClick={() => onAdd(item)}
-                        sx={{
-                          border: `1px solid rgba(255,255,255,0.1)`,
-                          borderRadius: "6px",
-                          p: 0.3,
-                          color: "rgba(255,255,255,0.5)",
-                          "&:hover": { borderColor: BLUE, color: BLUE },
-                        }}
+                        sx={{ border: `1px solid rgba(255,255,255,0.1)`, borderRadius: "6px", p: 0.3, color: "rgba(255,255,255,0.5)", "&:hover": { borderColor: BLUE, color: BLUE } }}
                       >
                         <AddOutlined sx={{ fontSize: 14 }} />
                       </IconButton>
@@ -839,11 +784,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   <IconButton
                     size="small"
                     onClick={() => onDelete(item)}
-                    sx={{
-                      color: "rgba(255,255,255,0.2)",
-                      alignSelf: "flex-start",
-                      "&:hover": { color: "#ef4444" },
-                    }}
+                    sx={{ color: "rgba(255,255,255,0.2)", alignSelf: "flex-start", "&:hover": { color: "#ef4444" } }}
                   >
                     <DeleteOutlineOutlined sx={{ fontSize: 18 }} />
                   </IconButton>
@@ -855,36 +796,20 @@ export default function HomeNavbar(props: HomeNavbarProps) {
           {cartItems.length > 0 && (
             <Box>
               <Divider sx={{ borderColor: BORDER, mb: 2 }} />
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={2}
-              >
-                <Box sx={{ fontSize: 15, color: "rgba(255,255,255,0.5)" }}>
-                  Total
-                </Box>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+                <Box sx={{ fontSize: 15, color: "rgba(255,255,255,0.5)" }}>Total</Box>
                 <Box sx={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>
                   ${totalPrice.toLocaleString()}
                 </Box>
               </Stack>
               <Stack gap={1.5}>
-                <NavLink
-                  to="/orders"
-                  style={{ textDecoration: "none" }}
-                  onClick={() => setCartOpen(false)}
-                >
+                <NavLink to="/orders" style={{ textDecoration: "none" }} onClick={() => setCartOpen(false)}>
                   <Button
                     fullWidth
                     variant="contained"
                     sx={{
-                      background: BLUE,
-                      color: "#fff",
-                      fontWeight: 700,
-                      py: 1.4,
-                      borderRadius: "10px",
-                      textTransform: "none",
-                      fontSize: 15,
+                      background: BLUE, color: "#fff", fontWeight: 700, py: 1.4,
+                      borderRadius: "10px", textTransform: "none", fontSize: 15,
                       boxShadow: `0 8px 24px ${BLUE}33`,
                       "&:hover": { background: BLUE_DARK },
                     }}
@@ -898,10 +823,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   sx={{
                     color: "rgba(255,255,255,0.35)",
                     border: `1px solid rgba(255,255,255,0.08)`,
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    py: 1,
-                    fontSize: 13,
+                    borderRadius: "10px", textTransform: "none", py: 1, fontSize: 13,
                     "&:hover": { borderColor: "#ef4444", color: "#ef4444" },
                   }}
                 >
@@ -918,13 +840,9 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         anchor="left"
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
+        sx={{ zIndex: 1500 }}
         PaperProps={{
-          sx: {
-            width: 280,
-            background: BG2,
-            borderRight: `1px solid ${BORDER}`,
-            p: 0,
-          },
+          sx: { width: 300, background: BG2, borderRight: `1px solid ${BORDER}`, p: 0 },
         }}
       >
         <Stack sx={{ height: "100%" }}>
@@ -949,10 +867,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 TECHSTORE
               </Box>
             </Stack>
-            <IconButton
-              onClick={() => setMobileOpen(false)}
-              sx={{ color: "rgba(255,255,255,0.5)" }}
-            >
+            <IconButton onClick={() => setMobileOpen(false)} sx={{ color: "rgba(255,255,255,0.5)" }}>
               <CloseOutlined />
             </IconButton>
           </Stack>
@@ -961,24 +876,15 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             direction="row"
             alignItems="center"
             sx={{
-              mx: 2,
-              my: 1.5,
+              mx: 2, my: 1.5,
               background: "rgba(255,255,255,0.05)",
               border: `1px solid rgba(255,255,255,0.08)`,
-              borderRadius: "8px",
-              overflow: "hidden",
+              borderRadius: "8px", overflow: "hidden",
             }}
           >
             <InputBase
               placeholder="Search..."
-              sx={{
-                flex: 1,
-                px: 2,
-                py: 0.8,
-                fontSize: 14,
-                color: "#fff",
-                "& input::placeholder": { color: "rgba(255,255,255,0.3)" },
-              }}
+              sx={{ flex: 1, px: 2, py: 0.8, fontSize: 14, color: "#fff", "& input::placeholder": { color: "rgba(255,255,255,0.3)" } }}
             />
             <Box sx={{ px: 1.5, display: "flex", color: "rgba(255,255,255,0.3)" }}>
               <SearchOutlined sx={{ fontSize: 20 }} />
@@ -987,31 +893,17 @@ export default function HomeNavbar(props: HomeNavbarProps) {
 
           <Box sx={{ flex: 1, overflowY: "auto" }}>
             {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                style={{ textDecoration: "none" }}
-                onClick={() => setMobileOpen(false)}
-              >
+              <NavLink key={link.to} to={link.to} style={{ textDecoration: "none" }} onClick={() => setMobileOpen(false)}>
                 <Box
                   sx={{
-                    px: 2.5,
-                    py: 1.4,
-                    fontSize: 15,
+                    px: 2.5, py: 1.4, fontSize: 15,
                     fontWeight: isActive(link.to) ? 700 : 500,
                     color: isActive(link.to) ? BLUE : "rgba(255,255,255,0.65)",
-                    background: isActive(link.to)
-                      ? "rgba(41,121,255,0.1)"
-                      : "transparent",
-                    borderLeft: isActive(link.to)
-                      ? `3px solid ${BLUE}`
-                      : "3px solid transparent",
+                    background: isActive(link.to) ? "rgba(41,121,255,0.1)" : "transparent",
+                    borderLeft: isActive(link.to) ? `3px solid ${BLUE}` : "3px solid transparent",
                     borderBottom: `1px solid rgba(255,255,255,0.05)`,
                     transition: "all 0.15s",
-                    "&:hover": {
-                      background: "rgba(41,121,255,0.08)",
-                      color: BLUE,
-                    },
+                    "&:hover": { background: "rgba(41,121,255,0.08)", color: BLUE },
                   }}
                 >
                   {link.label}
@@ -1022,21 +914,14 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             <Divider sx={{ borderColor: BORDER, my: 1 }} />
 
             {categoryLinks.map((cat, i) => (
-              <NavLink
-                key={i}
-                to={cat.to}
-                style={{ textDecoration: "none" }}
-                onClick={() => setMobileOpen(false)}
-              >
+              <NavLink key={i} to={cat.to} style={{ textDecoration: "none" }} onClick={() => setMobileOpen(false)}>
                 <Box
                   sx={{
-                    px: 2.5,
-                    py: 1.2,
-                    fontSize: 14,
+                    px: 2.5, py: 1.1, fontSize: 13,
                     fontWeight: cat.highlight ? 700 : 400,
-                    color: cat.highlight ? BLUE : "rgba(255,255,255,0.5)",
+                    color: cat.highlight ? BLUE : "rgba(255,255,255,0.45)",
                     borderBottom: `1px solid rgba(255,255,255,0.04)`,
-                    "&:hover": { background: "rgba(255,255,255,0.03)" },
+                    "&:hover": { background: "rgba(255,255,255,0.03)", color: "#fff" },
                   }}
                 >
                   {cat.label}
@@ -1049,17 +934,9 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             {!authMember ? (
               <Stack gap={1.2}>
                 <Button
-                  fullWidth
-                  variant="contained"
+                  fullWidth variant="contained"
                   onClick={() => { setLoginOpen(true); setMobileOpen(false); }}
-                  sx={{
-                    background: BLUE,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    borderRadius: "10px",
-                    py: 1.2,
-                    "&:hover": { background: BLUE_DARK },
-                  }}
+                  sx={{ background: BLUE, textTransform: "none", fontWeight: 600, borderRadius: "10px", py: 1.2, "&:hover": { background: BLUE_DARK } }}
                 >
                   Login
                 </Button>
@@ -1069,10 +946,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   sx={{
                     color: "rgba(255,255,255,0.7)",
                     border: `1.5px solid rgba(255,255,255,0.15)`,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    borderRadius: "10px",
-                    py: 1.2,
+                    textTransform: "none", fontWeight: 600, borderRadius: "10px", py: 1.2,
                     "&:hover": { borderColor: BLUE, color: BLUE },
                   }}
                 >
@@ -1083,13 +957,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               <Button
                 fullWidth
                 onClick={() => setMobileOpen(false)}
-                sx={{
-                  border: `1px solid ${BORDER}`,
-                  color: "rgba(255,255,255,0.6)",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: "10px",
-                }}
+                sx={{ border: `1px solid ${BORDER}`, color: "rgba(255,255,255,0.6)", textTransform: "none", fontWeight: 600, borderRadius: "10px" }}
               >
                 My Profile
               </Button>
@@ -1114,6 +982,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             overflow: "visible",
             mt: 1.5,
             minWidth: 140,
+            zIndex: 1600,
             "&:before": {
               content: '""',
               display: "block",
@@ -1136,10 +1005,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         <MenuItem
           onClick={handleLogoutRequest}
           sx={{
-            fontSize: 14,
-            color: "rgba(255,255,255,0.75)",
-            px: 2.5,
-            py: 1.2,
+            fontSize: 14, color: "rgba(255,255,255,0.75)", px: 2.5, py: 1.2,
             "&:hover": { background: "rgba(239,68,68,0.08)", color: "#ef4444" },
           }}
         >

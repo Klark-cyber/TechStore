@@ -4,8 +4,9 @@ import Advertisement from "./Advirtesement";
 import ActiveUsers from "./ActiveUsers";
 import Events from "./Events";
 import PopularDishes from "./PopularDishes";
-import NewDishes from "./NewDishes";
-import "../../../css/home.css"
+import NewArrivals from "./Newarrivals";
+import "../../../css/home.css";
+//import "../../../css/advertisement.css";
 
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -15,72 +16,76 @@ import { retrivePopularDishes } from "./selector";
 import { Product } from "../../../lib/types/product";
 import ProductService from "../../services/ProductService";
 import { ProductCollection } from "../../../lib/enums/product.enum";
-
 import MemberService from "../../services/MemberService";
 import { Member } from "../../../lib/types/member";
-/** REDUX SLICE & SELECTOR */
+import { CartItem } from "../../../lib/types/search";
 
+/** REDUX */
 const actionDispatch = (dispatch: Dispatch) => ({
-  setPopularDishes: (data: Product[]) => dispatch(setPopularDishes(data)),  //setPopulraDishes comanda nomi bolib uni setPopularDishes reducer orqali hosil qilib oldik, dispatch ichida esa setPopularDishes reducerimiz.comanda va reducer nomlarini bir xil nomlab oldik
-  setNewDishes: (data:Product[]) => dispatch(setNewDishes(data)),
-  setTopUsers: (data: Member[]) => dispatch(setTopUsers(data))
+  setPopularDishes: (data: Product[]) => dispatch(setPopularDishes(data)),
+  setNewDishes: (data: Product[]) => dispatch(setNewDishes(data)),
+  setTopUsers: (data: Member[]) => dispatch(setTopUsers(data)),
 });
 
-//retriever orqali storega yuklangan malumotni togridan togri chaqirib olish
 const popularDishesRetriever = createSelector(
-  retrivePopularDishes, 
-  (popularDishes) => ({popularDishes}))
+  retrivePopularDishes,
+  (popularDishes) => ({ popularDishes })
+);
 
-export default function HomePage() {
-  const {setPopularDishes, setNewDishes, setTopUsers} = actionDispatch(useDispatch());
-  const {popularDishes} = useSelector(popularDishesRetriever);
+// ← onAdd prop qo'shildi
+interface HomePageProps {
+  onAdd: (item: CartItem) => void;
+}
 
+export default function HomePage(props: HomePageProps) {
+  const { onAdd } = props;
+  const { setPopularDishes, setNewDishes, setTopUsers } = actionDispatch(useDispatch());
+  const { popularDishes } = useSelector(popularDishesRetriever);
 
-useEffect(() => {
-  // Backend server data fetch => Data. Datani backenddan togridan togri olmaymiz.Yaxshsisi kerakli servise ni joriy qilamiz
- const product = new ProductService;
-product.getProducts(
-{page: 1,
-limit: 4,
-order: "productViews",
-productCollection: ProductCollection.DISH}
+  useEffect(() => {
+    const product = new ProductService();
 
-).then(data => {
-  console.log("data passed here:", data)
-  setPopularDishes(data)
-}).catch(err => console.log(err))
+    product
+      .getProducts({
+        page: 1,
+        limit: 4,
+        order: "productViews",
+        productCollection: ProductCollection.LAPTOPS,
+      })
+      .then((data: any) => {
+        const list = Array.isArray(data) ? data : data?.list ?? [];
+        setPopularDishes(list);
+      })
+      .catch((err) => console.log(err));
 
+    product
+      .getProducts({
+        page: 1,
+        limit: 5,
+        order: "createdAt",
+        productCollection: ProductCollection.TELEPHONE,
+      })
+      .then((data: any) => {
+        const list = Array.isArray(data) ? data : data?.list ?? [];
+        setNewDishes(list);
+      })
+      .catch((err) => console.log(err));
 
-product.getProducts(
-{page: 1,
-limit: 4,
-order: "createdAt",
-productCollection: ProductCollection.DISH}
-
-).then(data => {
-  setNewDishes(data)
-}).catch(err => console.log(err))
-},[])
-
-
-const member = new MemberService();
-member
-.getTopUsers()
-.then((data) => {
-    setTopUsers(data);
-})
-.catch(
-  (err) => console.log(err))
-
+    const member = new MemberService();
+    member
+      .getTopUsers()
+      .then((data) => setTopUsers(data))
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
-  <div className={"homepage"}> {/**Barcha section complar homepage schreen components ichida joylashtirildi sababi ular faqat HomePage schreen comp ichida foydalaniladi */}
-    <Statistics/>
-    <PopularDishes/>
-    <NewDishes/>
-    <Advertisement/>
-    <ActiveUsers/>
-    <Events/>
-  </div>
+    <div className={"homepage"}>
+      <Statistics />
+      <PopularDishes />
+      <NewArrivals onAdd={onAdd} />  {/* ← onAdd uzatildi */}
+      <Advertisement />
+      <ActiveUsers />
+      <Events />
+    </div>
   );
 }

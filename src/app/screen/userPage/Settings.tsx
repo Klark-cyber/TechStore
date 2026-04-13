@@ -9,6 +9,7 @@ import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/swee
 import { Message } from "@mui/icons-material";
 import { Messages, serverApi } from "../../../lib/config";
 import MemberService from "../../services/MemberService";
+import React from "react";
 
 export function Settings() {
 

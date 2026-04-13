@@ -4,6 +4,7 @@ import SwiperCore, { Autoplay, Pagination, EffectCoverflow } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
+import React from "react";
 
 SwiperCore.use([Autoplay, Pagination, EffectCoverflow]);
 
@@ -169,4 +170,4 @@ export default function Events() {
 
     </Box>
   );
-}
+} 

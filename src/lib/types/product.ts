@@ -1,14 +1,20 @@
-import { ProductCollection, ProductSize, ProductStatus } from "../enums/product.enum";
+import { ProductCollection, ProductStatus } from "../enums/product.enum";
+import { ObjectId } from 'mongoose';
 
+//.  TECHSTROE
 export interface Product{
-    _id: string; //frontenddan id ni object holatida emas string holatda qabul qilamiz
+    _id: ObjectId;
     productStatus: ProductStatus;
     productCollection: ProductCollection;
     productName: string;
     productPrice: number;
     productLeftCount: number;
-    productSize: ProductSize;
-    productVolume: number;
+    productBrand: string;
+    productMemory: number;
+    productRam: number;
+    productLikes: number,
+    productRating: number,
+    productReviewCount:number,
     productDesc?: string;
     productImages: string[];
     productViews: number;
@@ -16,10 +22,30 @@ export interface Product{
     updatedAt: Date;
 }
 
-export interface ProductInquiry {
-    order: string;
-    page: number;
-    limit: number;
-    productCollection?: ProductCollection;
-    search?: string; 
+
+
+export interface ProductInput{
+    productStatus?: ProductStatus;
+    productCollection: ProductCollection; //Product Type
+    productName: string;
+    productPrice: number;
+    productLeftCount: number;
+    productBrand: string,
+    productMemory?: number;
+    productRam?: number;
+    productDesc?: string;
+    productImages: string[];
+    productViews?: number;
 }
+
+export interface ProductInquiry {
+  order: string;
+  page: number;
+  limit: number;
+  productCollection?: ProductCollection;
+  search?: string;
+  productRam?: string;       // 🔥 new
+  productMemory?: string;    // 🔥 new
+  productBrand?: string;
+}
+

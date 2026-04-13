@@ -19,6 +19,7 @@ import { useGlobals } from "../../hooks/useGlobals";
 import { useHistory } from "react-router-dom";
 import { serverApi } from "../../../lib/config";
 import { MemberType } from "../../../lib/enums/member.enum";
+import React from "react";
 
 
 /** REDUX SLICE & SELECTOR */
@@ -112,7 +113,7 @@ if(!authMember) history.push("/")
               className={"order-user-avatar"} /> {/**user rasmi ichidagi user rasmi */}
               <div className={"order-user-icon-box"} > {/**rasm ichidagi iconga tegishli div */}
                 <img 
-                src={authMember?.memberType === MemberType.RESTAURANT ? "/icons/restaurant.svg" : "/icons/user-badge.svg"}
+                src={authMember?.memberType === MemberType.ADMIN ? "/icons/restaurant.svg" : "/icons/user-badge.svg"}
                 className={"order-user-prof-img"} />{/**iconga tegishli div ichidagi icon */}
                 </div>
               </div>

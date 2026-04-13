@@ -1,29 +1,43 @@
-export enum ProductSize{
-    SMALL = "SMALL",
-    NORMAL = 'NORMAL',
-    LARGE = 'LARGE',
-    SET = 'SET'
+export enum AttributeKey{
+    MEMORY = "MEMORY",
+    RAM = 'RAM',
+    COLOR = 'COLOR',
+    BATTERY = 'BATTERY',
+    STORAGE = 'STORAGE'
 }
 
-export enum ProductVolume {
-    HALF = 0.5,
-    ONE = 1,
-    ONE_POINT_TWO = 1.2,
-    ONE_POINT_FIVE = 1.5,
-    TWO = 2
-}
 
 export enum ProductStatus{
     PAUSE = "PAUSE",
     PROCESS = "PROCESS",
-    DELETE = "DELETE"
+    DELETE = "DELETE",
 }
 
 export enum ProductCollection {
-    DISH = "DISH",
-    SALAD = "SALAD",
-    DESSERT = "DESERT",
-    DRINK = "DRINK",
-    OTHER = "OTHER"
+    LAPTOPS = "LAPTOPS",
+    PC = "PC",
+    ACCESSORIES = "ACCESSORIES",
+    MACBOOKS = "MACBOOKS",
+    SMARTWATCHES ="SMARTWATCHES",
+    OTHERS ="OTHERS",
+    TELEPHONE = "TELEPHONE"
 }
 
+export enum ProductMemory {
+  GB_32 = "32GB",
+  GB_64 = "64GB",
+  GB_128 = "128GB",
+  GB_256 = "256GB",
+  GB_512 = "512GB",
+  TB_1 = "1TB",
+}
+
+export enum ProductRam {
+  GB_2 = "2GB",
+  GB_4 = "4GB",
+  GB_6 = "6GB",
+  GB_8 = "8GB",
+  GB_12 = "12GB",
+  GB_16 = "16GB",
+  GB_32 = "32GB",
+}
