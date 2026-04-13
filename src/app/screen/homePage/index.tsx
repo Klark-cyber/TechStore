@@ -3,7 +3,7 @@ import Statistics from "./Statistics";
 import Advertisement from "./Advirtesement";
 import ActiveUsers from "./ActiveUsers";
 import Events from "./Events";
-import PopularDishes from "./PopularDishes";
+import TopBrands from "./TopBrands";
 import NewArrivals from "./Newarrivals";
 import "../../../css/home.css";
 //import "../../../css/advertisement.css";
@@ -81,7 +81,7 @@ export default function HomePage(props: HomePageProps) {
   return (
     <div className={"homepage"}>
       <Statistics />
-      <PopularDishes />
+      <TopBrands />
       <NewArrivals onAdd={onAdd} />  {/* ← onAdd uzatildi */}
       <Advertisement />
       <ActiveUsers />
