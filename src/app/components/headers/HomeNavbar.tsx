@@ -1,38 +1,10 @@
-import {
-  Box,
-  Button,
-  Container,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Stack,
-  Badge,
-  Drawer,
-  IconButton,
-  Divider,
-  InputBase,
-} from "@mui/material";
+import {Box,Button,Container, ListItemIcon,Menu,MenuItem,Stack,Badge,Drawer,IconButton,Divider,InputBase,} from "@mui/material";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
-import {
-  Logout,
-  ShoppingCartOutlined,
-  PersonOutlined,
-  MenuOutlined,
-  CloseOutlined,
-  AddOutlined,
-  RemoveOutlined,
-  DeleteOutlineOutlined,
-  SearchOutlined,
-  LocationOnOutlined,
-  PhoneOutlined,
-  Facebook,
-  Twitter,
-  Instagram,
-  BoltOutlined,
+import {Logout,ShoppingCartOutlined,PersonOutlined,MenuOutlined,CloseOutlined,AddOutlined,RemoveOutlined,DeleteOutlineOutlined,SearchOutlined,LocationOnOutlined,PhoneOutlined,Facebook, Twitter,  Instagram, BoltOutlined,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -144,9 +116,10 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         }}
       >
         <Container maxWidth="xl">
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ height: 116, gap: 2 }}>
-            {/* Logo */}
-            <NavLink to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ height: 64, gap: 2 }}>
+
+            {/* ── Logo (chap) ── */}
+            <NavLink to="/" exact style={{ textDecoration: "none", flexShrink: 0 }}>
               <Stack direction="row" alignItems="center" gap={0.8}>
                 <BoltOutlined sx={{ color: BLUE, fontSize: 24, filter: `drop-shadow(0 0 6px ${BLUE}88)` }} />
                 <Stack direction="row" alignItems="baseline">
@@ -156,12 +129,15 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               </Stack>
             </NavLink>
 
-            {/* Desktop nav */}
-            <Stack direction="row" gap={0.5} sx={{ display: { xs: "none", lg: "flex" } }}>
+            {/* ── O'ng tomon: links + cart + account ── */}
+            <Stack direction="row" alignItems="center" gap={0.5}>
+
+              {/* Nav links */}
               {navLinks.map((link) => (
-                <NavLink key={link.to} to={link.to} style={{ textDecoration: "none" }}>
+                <NavLink key={link.to} to={link.to} exact={link.to === "/"} style={{ textDecoration: "none" }}>
                   <Box sx={{
                     px: 1.8, py: 0.8, fontSize: 14, fontWeight: 500,
+                    cursor: "pointer",
                     color: isActive(link.to) ? BLUE : "rgba(255,255,255,0.65)",
                     borderBottom: isActive(link.to) ? `2px solid ${BLUE}` : "2px solid transparent",
                     borderRadius: isActive(link.to) ? "6px 6px 0 0" : "6px",
@@ -171,25 +147,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                   }}>{link.label}</Box>
                 </NavLink>
               ))}
-            </Stack>
 
-            {/* Search */}
-            <Stack direction="row" alignItems="center" sx={{
-              flex: 1, maxWidth: 380, display: { xs: "none", md: "flex" },
-              background: "rgba(255,255,255,0.05)", border: `1px solid rgba(255,255,255,0.1)`,
-              borderRadius: "10px", overflow: "hidden",
-              "&:focus-within": { border: `1px solid ${BLUE}`, background: "rgba(41,121,255,0.06)" },
-              transition: "all 0.2s",
-            }}>
-              <InputBase placeholder="Search Products ..." value={searchVal} onChange={(e) => setSearchVal(e.target.value)}
-                sx={{ flex: 1, px: 2, py: 0.9, fontSize: 14, color: "#fff", "& input::placeholder": { color: "rgba(255,255,255,0.3)" } }} />
-              <Box sx={{ background: BLUE, px: 1.8, py: 1.15, cursor: "pointer", display: "flex", alignItems: "center", "&:hover": { background: BLUE_DARK }, transition: "background 0.2s" }}>
-                <SearchOutlined sx={{ fontSize: 18, color: "#fff" }} />
-              </Box>
-            </Stack>
+              {/* Divider */}
+              <Box sx={{ width: 1, height: 32, background: BORDER, mx: 0.5 }} />
 
-            {/* Cart + User */}
-            <Stack direction="row" alignItems="center" gap={1}>
+              {/* Cart */}
               <Stack direction="row" alignItems="center" gap={1.5} onClick={() => setCartOpen(true)}
                 sx={{ cursor: "pointer", px: 2, py: 1, borderRadius: "10px", border: `1px solid rgba(255,255,255,0.08)`, background: "rgba(255,255,255,0.03)", "&:hover": { border: `1px solid ${BLUE}`, background: "rgba(41,121,255,0.08)" }, transition: "all 0.2s" }}>
                 <Badge badgeContent={totalItems} sx={{ "& .MuiBadge-badge": { background: BLUE, color: "#fff", fontSize: 10, fontWeight: 700, minWidth: 18, height: 18 } }}>
@@ -201,11 +163,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 </Box>
               </Stack>
 
-              <Box sx={{ width: 1, height: 32, background: BORDER, display: { xs: "none", sm: "block" } }} />
+              {/* Divider */}
+              <Box sx={{ width: 1, height: 32, background: BORDER }} />
 
+              {/* Account / Avatar */}
               {!authMember ? (
                 <Stack direction="row" alignItems="center" gap={1} onClick={() => setLoginOpen(true)}
-                  sx={{ cursor: "pointer", px: 1.5, py: 1, borderRadius: "10px", display: { xs: "none", sm: "flex" }, "&:hover": { background: "rgba(255,255,255,0.05)" }, transition: "background 0.2s" }}>
+                  sx={{ cursor: "pointer", px: 1.5, py: 1, borderRadius: "10px", "&:hover": { background: "rgba(255,255,255,0.05)" }, transition: "background 0.2s" }}>
                   <PersonOutlined sx={{ fontSize: 22, color: "rgba(255,255,255,0.7)" }} />
                   <Box>
                     <Box sx={{ fontSize: 11, color: "rgba(255,255,255,0.35)", lineHeight: 1.2 }}>User</Box>
@@ -220,36 +184,14 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 />
               )}
 
+              {/* Mobile menu button */}
               <IconButton onClick={() => setMobileOpen(true)} sx={{ display: { xs: "flex", lg: "none" }, color: "rgba(255,255,255,0.7)" }}>
                 <MenuOutlined />
               </IconButton>
+
             </Stack>
           </Stack>
         </Container>
-
-        {/* ── CATEGORY BAR ── */}
-        <Box sx={{ background: "rgba(41,121,255,0.1)", borderTop: `1px solid ${BORDER}` }}>
-          <Container maxWidth="xl">
-            <Stack direction="row" alignItems="center" sx={{ height: 42, overflowX: "auto", "&::-webkit-scrollbar": { display: "none" } }}>
-              {categoryLinks.map((cat, i) => (
-                <NavLink key={i} to={cat.to} style={{ textDecoration: "none", flexShrink: 0 }}>
-                  <Box sx={{
-                    px: 2, height: 42, display: "flex", alignItems: "center",
-                    fontSize: 12, fontWeight: cat.highlight ? 700 : 500,
-                    color: cat.highlight ? BLUE : isActive(cat.to) ? "#fff" : "rgba(255,255,255,0.55)",
-                    borderRight: i < categoryLinks.length - 1 ? `1px solid ${BORDER}` : "none",
-                    background: isActive(cat.to) ? "rgba(41,121,255,0.15)" : "transparent",
-                    transition: "all 0.2s", whiteSpace: "nowrap",
-                    "&:hover": { background: "rgba(41,121,255,0.12)", color: "#fff" },
-                  }}>
-                    {i === 0 && <MenuOutlined sx={{ fontSize: 15, mr: 0.8, color: "rgba(255,255,255,0.5)" }} />}
-                    {cat.label}
-                  </Box>
-                </NavLink>
-              ))}
-            </Stack>
-          </Container>
-        </Box>
       </Box>
 
       {/* ── HERO SECTION ── */}

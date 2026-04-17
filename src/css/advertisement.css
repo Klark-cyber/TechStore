@@ -1,20 +1,75 @@
-.ads-restaurant-frame {
-  position: relative;
+/* ============================================================
+   ADVERTISEMENT.CSS  —  Advertisement komponenti
+   ============================================================ */
+
+.homepage .ads-restaurant-frame {
   width: 100%;
-  height: 100%; /* parentga bog‘liq */
-  overflow: hidden;
+  background: #060b13;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  padding: 50px 0;
+  /* Eski: height: 693px, box-shadow, overflow — bular olib tashlandi */
 }
 
-/* video containerni to‘liq egallaydi */
-.ads-video {
+/* Video wrapper */
+.homepage .ads-restaurant-frame .ads-video-wrapper {
+  width: 75%;
+  max-width: 1100px;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  border-radius: 0;
+}
+
+/* 16:9 aspect ratio uchun spacer */
+.homepage .ads-restaurant-frame .ads-video-wrapper .ads-ratio {
+  padding-top: 56.25%;
+}
+
+/* Video elementi */
+.homepage .ads-restaurant-frame .ads-video-wrapper video {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100vw;
-  height: 56.25vw; /* 16:9 ratio */
-  min-height: 100%;
-  min-width: 177.77%; /* ratio fix */
-  transform: translate(-50%, -50%);
-  
-  pointer-events: none; /* bosilmaydi */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Chap gradient fade */
+.homepage .ads-restaurant-frame .ads-fade-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    #060b13 0%,
+    rgba(6, 11, 19, 0.6) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* O'ng gradient fade */
+.homepage .ads-restaurant-frame .ads-fade-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18%;
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    #060b13 0%,
+    rgba(6, 11, 19, 0.6) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
 }
