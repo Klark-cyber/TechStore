@@ -1,27 +1,45 @@
 import React, { ReactNode, useState } from "react";
-import Cookies from "universal-cookie";
 import { Member } from "../../lib/types/member";
 import { GlobalContext } from "../hooks/useGlobals";
 
-const ContextProvider: React.FunctionComponent<{children: ReactNode}> = ({children}) => {
-    //cookie ichidan kerakli malumotni olishimiz mumkin boladi buning uchun universalCookie package kerak boladi
-    const cookies = new Cookies();
-    if(!cookies.get("accessToken")) localStorage.removeItem("memberData") //browserdan memberDatani ochirishga sabab Acesstookenning yashash muddati mavjud u tugagach token ochadi lekin storeda memberData turaveradi shu sababli uni ochirib yuboryapmiz.Agar AccesToken mavjud bolsa memberDatani ochirishning keragi yoq
+const ContextProvider: React.FunctionComponent<{ children: ReactNode }> = ({ children }) => {
 
-    const [authMember, setAuthMember] = useState<Member | null>( 
-        //storeda aceestoken bor bolsa memberDatani yuklab olib objectga ogirdik.Agar accestoken mavjud bolmasa memberData ochiriladi va authMember useState orqali null qiymatni qabul qilish mantigi 
-        localStorage.getItem("memberData") ? JSON.parse(localStorage.getItem("memberData") as string) : null 
-    );
-    
-    const [orderBuilder, setOrderBuilder] = useState<Date>(new Date()); 
-    console.log("===== verify ======") 
-    return (<GlobalContext.Provider value={{authMember, setAuthMember, orderBuilder, setOrderBuilder}}>
-        {children} {/**children Appt.tsx ichida ContextProvider ichiga wrap bolgan barcha componentlar */}
-    </GlobalContext.Provider>);
+  // ❌ OLIB TASHLANDI:
+  // const cookies = new Cookies();
+  // if (!cookies.get("accessToken")) localStorage.removeItem("memberData");
+  //
+  // Sabab: backend cookie ni httpOnly:true bilan yuboradi.
+  // httpOnly cookie ni JavaScript o'qiy olmaydi.
+  // Shuning uchun cookies.get("accessToken") har doim undefined qaytardi,
+  // va memberData har refresh da o'chib ketardi → logout ko'rinardi.
+  //
+  // Logout da MemberService.logout() o'zi localStorage.removeItem("memberData") qiladi ✅
 
-//savatcha bosilganda ham basketda ham paused ordersga bir vaqtda pause orderni bajarish mantigi
+  const [authMember, setAuthMemberState] = useState<Member | null>(
+    localStorage.getItem("memberData")
+      ? JSON.parse(localStorage.getItem("memberData") as string)
+      : null
+  );
 
+  const [orderBuilder, setOrderBuilder] = useState<Date>(new Date());
 
+  // setAuthMember wrapper — state + localStorage birga yangilanadi
+  const setAuthMember = (member: Member | null) => {
+    if (member) {
+      localStorage.setItem("memberData", JSON.stringify(member));
+    } else {
+      localStorage.removeItem("memberData");
+    }
+    setAuthMemberState(member);
+  };
 
-}
+  console.log("===== verify ======");
+
+  return (
+    <GlobalContext.Provider value={{ authMember, setAuthMember, orderBuilder, setOrderBuilder }}>
+      {children}
+    </GlobalContext.Provider>
+  );
+};
+
 export default ContextProvider;

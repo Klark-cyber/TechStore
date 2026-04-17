@@ -1,18 +1,19 @@
 import {
   Box, Button, Container, ListItemIcon, Menu, MenuItem,
-  Stack, Badge, Drawer, IconButton, Divider, InputBase,
+  Stack, Badge, Drawer, IconButton, Divider,
 } from "@mui/material";
 import { useLocation, useHistory } from "react-router-dom";
 import { useState } from "react";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../../hooks/useGlobals";
-import { serverApi } from "../../../lib/config";
+import { Messages, serverApi } from "../../../lib/config";
 import {
   Logout, ShoppingCartOutlined, MenuOutlined,
   CloseOutlined, AddOutlined, RemoveOutlined, DeleteOutlineOutlined,
-  SearchOutlined, BoltOutlined, LocalFireDepartmentOutlined,
-  NewReleasesOutlined, StarOutlined, SellOutlined,
+  BoltOutlined,
 } from "@mui/icons-material";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
+import OrderService from "../../services/OrderService";
 import React from "react";
 
 interface OtherNavbarProps {
@@ -42,34 +43,37 @@ export default function OtherNavbar(props: OtherNavbarProps) {
     anchorEl, handleCloseLogout, handleLogoutRequest,
   } = props;
 
-  const { authMember } = useGlobals();
+  const { authMember, setOrderBuilder } = useGlobals();
   const location = useLocation();
   const history = useHistory();
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchVal, setSearchVal] = useState("");
 
+  const itemsPrice = cartItems.reduce((a, c) => a + c.quantity * c.price, 0);
+  const shippingCost = itemsPrice < 100 ? 5 : 0;
+  const totalPrice = (itemsPrice + shippingCost).toFixed(1);
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  // Pathname + search (query) ni birga tekshiradi
   const isActive = (to: string) => {
     const [toPath, toQuery] = to.split("?");
-    const currentPath = location.pathname;
-    const currentSearch = location.search;
-
     if (toQuery) {
-      // Query params bor linklar uchun: path va query ikkalasi mos kelishi kerak
-      return currentPath === toPath && currentSearch === `?${toQuery}`;
+      return location.pathname === toPath && location.search === `?${toQuery}`;
     }
-    // Oddiy linklar uchun faqat pathname
-    return currentPath === toPath;
+    return location.pathname === toPath;
   };
 
-  const handleSearchSubmit = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && searchVal.trim()) {
-      history.push(`/products?search=${encodeURIComponent(searchVal.trim())}`);
-      setSearchVal("");
+  const proceedOrderHandler = async () => {
+    try {
+      setCartOpen(false);
+      if (!authMember) throw new Error(Messages.error2);
+      const order = new OrderService();
+      await order.createOrder(cartItems);
+      onDeleteAll();
+      setOrderBuilder(new Date());
+      history.push("/orders");
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
     }
   };
 
@@ -81,34 +85,9 @@ export default function OtherNavbar(props: OtherNavbarProps) {
     { label: "Help", to: "/help" },
   ];
 
-  const quickLinks = [
-    { label: "New Arrivals", to: "/products?order=createdAt", icon: <NewReleasesOutlined sx={{ fontSize: 14 }} /> },
-    { label: "Best Sellers", to: "/products?order=productViews", icon: <LocalFireDepartmentOutlined sx={{ fontSize: 14 }} /> },
-    { label: "Top Rated", to: "/products?order=productRating", icon: <StarOutlined sx={{ fontSize: 14 }} /> },
-    { label: "Sale", to: "/products?sale=true", icon: <SellOutlined sx={{ fontSize: 14 }} />, highlight: true },
-  ];
-
-  const categoryLinks = [
-    { label: "All", to: "/products" },
-    { label: "Phones", to: "/products?productCollection=TELEPHONE" },
-    { label: "Laptops", to: "/products?productCollection=LAPTOPS" },
-    { label: "PC", to: "/products?productCollection=PC" },
-    { label: "MacBooks", to: "/products?productCollection=MACBOOKS" },
-    { label: "Accessories", to: "/products?productCollection=ACCESSORIES" },
-    { label: "Smartwatches", to: "/products?productCollection=SMARTWATCHES" },
-    { label: "Others", to: "/products?productCollection=OTHERS" },
-  ];
-
-  // NavLink ichida Box ishlatmasdan, to'g'ridan-to'g'ri NavLink ga style beramiz
-  // Bu React Router v6 da eng ishonchli usul
-  const navLinkStyle = (to: string): React.CSSProperties => ({
-    textDecoration: "none",
-    display: "flex",
-    alignItems: "center",
-  });
-
   return (
     <>
+      {/* ── NAVBAR ── */}
       <Box
         component="nav"
         sx={{
@@ -119,12 +98,18 @@ export default function OtherNavbar(props: OtherNavbarProps) {
           boxShadow: "0 4px 40px rgba(0,0,0,0.6)",
         }}
       >
-        {/* ── TOP ROW ── */}
         <Container maxWidth="xl">
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ height: 60, gap: 2 }}>
-
-            {/* Logo */}
-            <Box onClick={() => history.push("/")} sx={{ textDecoration: "none", flexShrink: 0, cursor: "pointer" }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ height: 60, gap: 2 }}
+          >
+            {/* ── Logo (chap) ── */}
+            <Box
+              onClick={() => history.push("/")}
+              sx={{ flexShrink: 0, cursor: "pointer" }}
+            >
               <Stack direction="row" alignItems="center" gap={0.7}>
                 <BoltOutlined sx={{ color: BLUE, fontSize: 20, filter: `drop-shadow(0 0 5px ${BLUE}88)` }} />
                 <Stack direction="row" alignItems="baseline">
@@ -142,8 +127,10 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               </Stack>
             </Box>
 
-            {/* Desktop nav links */}
-            <Stack direction="row" gap={0.5} sx={{ display: { xs: "none", md: "flex" } }}>
+            {/* ── O'ng tomon: links + cart + login/avatar ── */}
+            <Stack direction="row" alignItems="center" gap={0.5}>
+
+              {/* Nav links */}
               {navLinks.map((link) => (
                 <Box
                   key={link.to}
@@ -156,53 +143,17 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                     borderRadius: isActive(link.to) ? "6px 6px 0 0" : "6px",
                     background: isActive(link.to) ? "rgba(41,121,255,0.08)" : "transparent",
                     transition: "all 0.2s", whiteSpace: "nowrap",
+                    display: { xs: "none", md: "flex" },
                     "&:hover": { color: BLUE, background: "rgba(41,121,255,0.08)" },
                   }}
                 >
                   {link.label}
                 </Box>
               ))}
-            </Stack>
 
-            {/* Search */}
-            <Stack direction="row" alignItems="center" sx={{
-              flex: 1, maxWidth: 320,
-              display: { xs: "none", lg: "flex" },
-              background: "rgba(255,255,255,0.04)",
-              border: `1px solid rgba(255,255,255,0.08)`,
-              borderRadius: "10px", overflow: "hidden",
-              "&:focus-within": { border: `1px solid ${BLUE}`, background: "rgba(41,121,255,0.05)" },
-              transition: "all 0.2s",
-            }}>
-              <InputBase
-                placeholder="Search..."
-                value={searchVal}
-                onChange={(e) => setSearchVal(e.target.value)}
-                onKeyDown={handleSearchSubmit}
-                sx={{
-                  flex: 1, px: 2, py: 0.7, fontSize: 13, color: "#fff",
-                  "& input::placeholder": { color: "rgba(255,255,255,0.25)" },
-                }}
-              />
-              <Box
-                onClick={() => {
-                  if (searchVal.trim()) {
-                    history.push(`/products?search=${encodeURIComponent(searchVal.trim())}`);
-                    setSearchVal("");
-                  }
-                }}
-                sx={{
-                  background: BLUE, px: 1.5, py: 0.9, cursor: "pointer",
-                  display: "flex", alignItems: "center",
-                  "&:hover": { background: BLUE_DARK }, transition: "background 0.2s",
-                }}
-              >
-                <SearchOutlined sx={{ fontSize: 16, color: "#fff" }} />
-              </Box>
-            </Stack>
+              {/* Divider */}
+              <Box sx={{ width: 1, height: 26, background: BORDER, mx: 0.5, display: { xs: "none", md: "block" } }} />
 
-            {/* Cart + User */}
-            <Stack direction="row" alignItems="center" gap={1}>
               {/* Cart */}
               <Stack
                 direction="row" alignItems="center" gap={1.2}
@@ -228,8 +179,10 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 </Box>
               </Stack>
 
+              {/* Divider */}
               <Box sx={{ width: 1, height: 26, background: BORDER, display: { xs: "none", sm: "block" } }} />
 
+              {/* Login / Avatar */}
               {!authMember ? (
                 <Stack direction="row" gap={0.8} sx={{ display: { xs: "none", sm: "flex" } }}>
                   <Button
@@ -278,6 +231,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 </Stack>
               )}
 
+              {/* Mobile menu */}
               <IconButton
                 onClick={() => setMobileOpen(true)}
                 sx={{ display: { xs: "flex", md: "none" }, color: "rgba(255,255,255,0.7)", p: 0.8 }}
@@ -287,67 +241,6 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             </Stack>
           </Stack>
         </Container>
-
-        {/* ── CATEGORY + QUICK LINKS ROW ── */}
-        <Box sx={{ background: "rgba(41,121,255,0.07)", borderTop: `1px solid ${BORDER}` }}>
-          <Container maxWidth="xl">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ height: 36, overflowX: "auto", "&::-webkit-scrollbar": { display: "none" } }}
-            >
-              {/* Categories */}
-              <Stack direction="row" alignItems="center" sx={{ flexShrink: 0 }}>
-                {categoryLinks.map((cat, i) => (
-                  <Box
-                    key={`cat-${i}`}
-                    onClick={() => history.push(cat.to)}
-                    sx={{
-                      px: 1.8, height: 36, display: "flex", alignItems: "center",
-                      fontSize: 11, fontWeight: 500, cursor: "pointer",
-                      color: isActive(cat.to) ? "#fff" : "rgba(255,255,255,0.4)",
-                      borderRight: i < categoryLinks.length - 1 ? `1px solid ${BORDER}` : "none",
-                      background: isActive(cat.to) ? "rgba(41,121,255,0.18)" : "transparent",
-                      transition: "all 0.2s",
-                      "&:hover": { background: "rgba(41,121,255,0.1)", color: "#fff" },
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {cat.label}
-                  </Box>
-                ))}
-              </Stack>
-
-              {/* Quick links */}
-              <Stack
-                direction="row"
-                alignItems="center"
-                gap={0}
-                sx={{ display: { xs: "none", md: "flex" }, borderLeft: `1px solid ${BORDER}`, ml: 2 }}
-              >
-                {quickLinks.map((ql, i) => (
-                  <Stack
-                    key={`ql-${i}`}
-                    direction="row" alignItems="center" gap={0.5}
-                    onClick={() => history.push(ql.to)}
-                    sx={{
-                      px: 1.8, height: 36, cursor: "pointer",
-                      color: ql.highlight ? "#fbbf24" : "rgba(255,255,255,0.5)",
-                      fontSize: 11, fontWeight: ql.highlight ? 700 : 500,
-                      transition: "all 0.2s", whiteSpace: "nowrap",
-                      borderRight: i < quickLinks.length - 1 ? `1px solid ${BORDER}` : "none",
-                      "&:hover": { color: ql.highlight ? "#f59e0b" : "#fff", background: "rgba(255,255,255,0.03)" },
-                    }}
-                  >
-                    {ql.icon}
-                    {ql.label}
-                  </Stack>
-                ))}
-              </Stack>
-            </Stack>
-          </Container>
-        </Box>
       </Box>
 
       {/* ── CART DRAWER ── */}
@@ -419,23 +312,26 @@ export default function OtherNavbar(props: OtherNavbarProps) {
           {cartItems.length > 0 && (
             <Box>
               <Divider sx={{ borderColor: BORDER, mb: 2 }} />
+              <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                <Box sx={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+                  Items: ${itemsPrice.toFixed(1)} + Shipping: ${shippingCost}
+                </Box>
+              </Stack>
               <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                 <Box sx={{ fontSize: 14, color: "rgba(255,255,255,0.5)" }}>Total</Box>
-                <Box sx={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>${totalPrice.toLocaleString()}</Box>
+                <Box sx={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>${totalPrice}</Box>
               </Stack>
               <Stack gap={1.5}>
-                {/* NavLink o'rniga navigate ishlatamiz — Drawer ichida NavLink ba'zan muammo chiqaradi */}
                 <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={() => { setCartOpen(false); history.push("/orders"); }}
+                  fullWidth variant="contained"
+                  onClick={proceedOrderHandler}
                   sx={{
                     background: BLUE, color: "#fff", fontWeight: 700, py: 1.3,
                     borderRadius: "10px", textTransform: "none", fontSize: 14,
                     "&:hover": { background: BLUE_DARK },
                   }}
                 >
-                  Checkout
+                  Order
                 </Button>
                 <Button fullWidth onClick={onDeleteAll}
                   sx={{
@@ -478,36 +374,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             </IconButton>
           </Stack>
 
-          {/* Mobile search */}
-          <Stack direction="row" alignItems="center" sx={{
-            mx: 2, my: 1.5,
-            background: "rgba(255,255,255,0.05)",
-            border: `1px solid rgba(255,255,255,0.08)`,
-            borderRadius: "8px", overflow: "hidden",
-          }}>
-            <InputBase
-              placeholder="Search..."
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && searchVal.trim()) {
-                  history.push(`/products?search=${encodeURIComponent(searchVal.trim())}`);
-                  setSearchVal("");
-                  setMobileOpen(false);
-                }
-              }}
-              sx={{
-                flex: 1, px: 2, py: 0.8, fontSize: 13, color: "#fff",
-                "& input::placeholder": { color: "rgba(255,255,255,0.3)" },
-              }}
-            />
-            <Box sx={{ px: 1.5, display: "flex", color: "rgba(255,255,255,0.3)" }}>
-              <SearchOutlined sx={{ fontSize: 18 }} />
-            </Box>
-          </Stack>
-
           <Box sx={{ flex: 1, overflowY: "auto" }}>
-            {/* Mobile nav links — NavLink o'rniga navigate ishlatamiz, Drawer ichida ishonchli */}
             {navLinks.map((link) => (
               <Box
                 key={link.to}
@@ -524,25 +391,6 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 }}
               >
                 {link.label}
-              </Box>
-            ))}
-
-            <Divider sx={{ borderColor: BORDER, my: 1 }} />
-
-            {categoryLinks.map((cat, i) => (
-              <Box
-                key={`m-cat-${i}`}
-                onClick={() => { history.push(cat.to); setMobileOpen(false); }}
-                sx={{
-                  px: 2.5, py: 1.1, fontSize: 13, cursor: "pointer",
-                  color: isActive(cat.to) ? "#fff" : "rgba(255,255,255,0.45)",
-                  background: isActive(cat.to) ? "rgba(41,121,255,0.1)" : "transparent",
-                  borderLeft: isActive(cat.to) ? `3px solid ${BLUE}` : "3px solid transparent",
-                  borderBottom: `1px solid rgba(255,255,255,0.04)`,
-                  "&:hover": { background: "rgba(255,255,255,0.03)", color: "#fff" },
-                }}
-              >
-                {cat.label}
               </Box>
             ))}
           </Box>
