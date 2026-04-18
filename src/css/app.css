@@ -22,6 +22,18 @@
   font-size: calc(10px + 2vmin);
 }
 
+/* SweetAlert2 dark override */
+.ts-toast-popup {
+  border: 1px solid rgba(41, 121, 255, 0.2) !important;
+  border-radius: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 14px !important;
+}
+
+.swal2-container {
+  z-index: 9999 !important;
+}
+
 .App-link {
   color: rgb(112, 76, 182);
 }

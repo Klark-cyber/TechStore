@@ -37,6 +37,16 @@ class ProductService {
             throw err;
         }
     }
+
+public async likeTargetProduct(productId: string): Promise<void> {
+  try {
+    const url = this.path + `/product/like/${productId}`;
+    await axios.get(url, { withCredentials: true });
+  } catch (err) {
+    console.log("Error, likeTargetProduct:", err);
+    throw err;
+  }
+}
 }
 
 export default ProductService;

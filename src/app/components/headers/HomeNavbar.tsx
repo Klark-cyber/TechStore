@@ -1,11 +1,13 @@
 import {Box,Button,Container, ListItemIcon,Menu,MenuItem,Stack,Badge,Drawer,IconButton,Divider,InputBase,} from "@mui/material";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useHistory } from "react-router-dom";
 import { useState } from "react";
 import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../../hooks/useGlobals";
-import { serverApi } from "../../../lib/config";
+import { Messages, serverApi } from "../../../lib/config";
 import {Logout,ShoppingCartOutlined,PersonOutlined,MenuOutlined,CloseOutlined,AddOutlined,RemoveOutlined,DeleteOutlineOutlined,SearchOutlined,BoltOutlined,
 } from "@mui/icons-material";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
+import OrderService from "../../services/OrderService";
 import React from "react";
 
 interface HomeNavbarProps {
@@ -36,14 +38,33 @@ export default function HomeNavbar(props: HomeNavbarProps) {
     anchorEl, handleCloseLogout, handleLogoutRequest,
   } = props;
 
-  const { authMember } = useGlobals();
+  const { authMember, setOrderBuilder } = useGlobals();
   const location = useLocation();
+  const history = useHistory();
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const itemsPrice = cartItems.reduce((a, c) => a + c.quantity * c.price, 0);
+  const shippingCost = itemsPrice < 100 ? 5 : 0;
+  const totalPrice = (itemsPrice + shippingCost).toFixed(1);
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
   const isActive = (to: string) => location.pathname === to;
+
+  const proceedOrderHandler = async () => {
+    try {
+      setCartOpen(false);
+      if (!authMember) throw new Error(Messages.error2);
+      const order = new OrderService();
+      await order.createOrder(cartItems);
+      onDeleteAll();
+      setOrderBuilder(new Date());
+      history.push("/orders");
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
+  };
 
   // highlight linklar olib tashlandi
   const categoryLinks = [
@@ -281,16 +302,21 @@ export default function HomeNavbar(props: HomeNavbarProps) {
           {cartItems.length > 0 && (
             <Box>
               <Divider sx={{ borderColor: BORDER, mb: 2 }} />
+              <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                <Box sx={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+                  Items: ${itemsPrice.toFixed(1)} + Shipping: ${shippingCost}
+                </Box>
+              </Stack>
               <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                 <Box sx={{ fontSize: 15, color: "rgba(255,255,255,0.5)" }}>Total</Box>
-                <Box sx={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>${totalPrice.toLocaleString()}</Box>
+                <Box sx={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>${totalPrice}</Box>
               </Stack>
               <Stack gap={1.5}>
-                <NavLink to="/orders" style={{ textDecoration: "none" }} onClick={() => setCartOpen(false)}>
-                  <Button fullWidth variant="contained" sx={{ background: BLUE, color: "#fff", fontWeight: 700, py: 1.4, borderRadius: "10px", textTransform: "none", fontSize: 15, boxShadow: `0 8px 24px ${BLUE}33`, "&:hover": { background: BLUE_DARK } }}>
-                    Checkout
-                  </Button>
-                </NavLink>
+                <Button fullWidth variant="contained"
+                  onClick={proceedOrderHandler}
+                  sx={{ background: BLUE, color: "#fff", fontWeight: 700, py: 1.4, borderRadius: "10px", textTransform: "none", fontSize: 15, boxShadow: `0 8px 24px ${BLUE}33`, "&:hover": { background: BLUE_DARK } }}>
+                  Order
+                </Button>
                 <Button fullWidth onClick={onDeleteAll} sx={{ color: "rgba(255,255,255,0.35)", border: `1px solid rgba(255,255,255,0.08)`, borderRadius: "10px", textTransform: "none", py: 1, fontSize: 13, "&:hover": { borderColor: "#ef4444", color: "#ef4444" } }}>
                   Clear All
                 </Button>
