@@ -1,0 +1,82 @@
+/* ============================================================
+   AUTH.CSS — AuthenticationModal styles
+   ============================================================ */
+
+.auth-modal-card {
+  width: 420px;
+  background: rgba(10, 12, 28, 0.97);
+  border: 1px solid rgba(41, 121, 255, 0.18);
+  border-radius: 20px;
+  padding: 40px 36px 36px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(41, 121, 255, 0.08);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-modal-glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 160px;
+  background: radial-gradient(
+    ellipse,
+    rgba(41, 121, 255, 0.18) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.auth-title-logo {
+  color: #2979ff;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.auth-title-brand {
+  font-family: "Orbitron", monospace;
+  font-weight: 900;
+  font-size: 18px;
+  background: linear-gradient(135deg, #fff 40%, #2979ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+
+.auth-title-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  font-family: "Orbitron", monospace;
+  letter-spacing: 0.5px;
+}
+
+.auth-title-divider {
+  margin-top: 6px;
+  width: 40px;
+  height: 3px;
+  background: #2979ff;
+  border-radius: 2px;
+}
+
+.auth-footer-text {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.auth-footer-link {
+  color: #2979ff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.auth-footer-link:hover {
+  text-decoration: underline;
+}

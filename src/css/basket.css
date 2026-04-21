@@ -1,0 +1,171 @@
+/* ============================================================
+   BASKET.CSS — Basket / Cart dropdown styles
+   ============================================================ */
+
+.basket-frame {
+  width: 340px;
+  padding: 16px;
+  background: #0d1020;
+  border-radius: 16px;
+}
+
+.all-check-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(41, 121, 255, 0.12);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.5px;
+}
+
+.orders-main-wrapper {
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 12px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(41, 121, 255, 0.3) transparent;
+}
+
+.orders-main-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.orders-main-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.orders-main-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(41, 121, 255, 0.3);
+  border-radius: 2px;
+}
+
+.orders-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.basket-info-box {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: border-color 0.2s;
+}
+
+.basket-info-box:hover {
+  border-color: rgba(41, 121, 255, 0.2);
+}
+
+.cancel-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.25);
+  transition: color 0.2s;
+}
+
+.cancel-btn:hover {
+  color: #ef4444;
+}
+
+.basket-info-box .product-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #111827;
+  flex-shrink: 0;
+}
+
+.basket-info-box .product-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.basket-info-box .product-price {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.col-2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.col-2 .remove,
+.col-2 .add {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgba(41, 121, 255, 0.25);
+  background: rgba(41, 121, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.col-2 .remove:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.col-2 .add:hover {
+  background: rgba(41, 121, 255, 0.2);
+  border-color: #2979ff;
+  color: #2979ff;
+}
+
+.basket-order {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(41, 121, 255, 0.12);
+}
+
+.basket-order .price {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.basket-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+}

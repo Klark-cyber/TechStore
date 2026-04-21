@@ -47,6 +47,16 @@ public async likeTargetProduct(productId: string): Promise<void> {
     throw err;
   }
 }
+
+public async rateProduct(input: { productId: string; rating: number }): Promise<void> {
+  try {
+    const url = this.path + "/product/rate";
+    await axios.post(url, input, { withCredentials: true });
+  } catch (err) {
+    console.log("Error, rateProduct:", err);
+    throw err;
+  }
+}
 }
 
 export default ProductService;

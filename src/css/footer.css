@@ -1,94 +1,89 @@
-.foot-desc-txt {
-  margin-top: 22px;
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 34px;
-  color: #e3c08d;
+/* Asosiy o'zgaruvchilar */
+:root {
+  --blue: #2979ff;
+  --bg: #080814;
+  --border: rgba(41, 121, 255, 0.15);
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --text-low: rgba(255, 255, 255, 0.3);
 }
 
-.sns-context {
-  margin-top: 17px;
-  width: 137px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.footer-container {
+  background-color: var(--bg);
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
 }
 
-.foot-category-title {
-  width: 106px;
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 24px;
-  line-height: 34px;
-  color: #c5c8c9;
-}
-
-.foot-category-link {
-  margin-top: 20px;
-  height: 170px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 170px;
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 34px;
-}
-
-.foot-category-link a {
-  color: #e3c08d;
+/* Logo Stili */
+.footer-logo-link {
   text-decoration: none;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+
+.logo-tech {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 22px;
+  background: linear-gradient(135deg, #fff 40%, var(--blue));
+  -webkit-background-clip: text;
+  background-clip: text; 
+
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+
+.logo-store {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--blue);
+  letter-spacing: 1px;
+}
+
+/* Ijtimoiy tarmoqlar */
+.social-icon-btn {
+  color: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid var(--border) !important;
+  transition: all 0.3s ease !important;
+}
+
+.social-icon-btn:hover {
+  background: transparent !important;
+}
+
+/* Quick Links */
+.section-title {
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-family: 'Orbitron', monospace !important;
+  font-size: 14px !important;
+  text-transform: uppercase;
+}
+
+.footer-nav-link {
+  color: rgba(255, 255, 255, 0.5) !important;
+  text-decoration: none !important;
+  font-size: 14px;
+  transition: all 0.2s ease !important;
+}
+
+.footer-nav-link:hover {
+  color: var(--blue) !important;
+  padding-left: 4px;
+}
+
+/* Pastki qism */
+.copyright-text {
+  font-size: 13px;
+  color: var(--text-low);
+}
+
+.footer-bottom-link {
+  font-size: 12px;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
-.find-us {
-  display: flex;
-  flex-direction: row;
-}
-
-.find-us span {
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 34px;
-  color: #c5c8c9;
-}
-
-.find-us div {
-  margin-left: 10px;
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 34px;
-  color: #e3c08d;
-}
-
-.copyright-txt {
-  margin-top: 17px;
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 34px;
-  color: #e3c08d;
-}
-
-.foot-category-title:after {
-  display: block;
-  content: "";
-  border-bottom: solid 2px #d7b686;
-  transform: scaleX(0);
-  transition: transform 250ms ease-in-out;
-  transform-origin: 0% 50%;
-}
-
-.foot-category-title:hover:after {
-  transform: scaleX(1);
+.footer-bottom-link:hover {
+  color: #fff;
 }
