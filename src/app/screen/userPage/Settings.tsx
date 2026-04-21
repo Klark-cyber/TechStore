@@ -42,7 +42,7 @@ export function Settings() {
   const [memberUpdateInput, setmemberUpdateInput] = useState<MemberUpdateInput>({
     memberNick: authMember?.memberNick,
     memberPhone: authMember?.memberPhone,
-    memberAddres: authMember?.memberAddres,
+    memberAddress: authMember?.memberAddress,
     memberDesc: authMember?.memberDesc,
     memberImage: authMember?.memberImage,
   });
@@ -64,30 +64,23 @@ export function Settings() {
   };
 
   const memberAddresHandler = (e: T) => {
-    memberUpdateInput.memberAddres = e.target.value;
+    memberUpdateInput.memberAddress = e.target.value;
     setmemberUpdateInput({ ...memberUpdateInput });
   };
 
   const handleSubmitButton = async () => {
-    try {
-      if (!authMember) throw new Error(Messages.error2);
-      if (
-        memberUpdateInput.memberNick === "" ||
-        memberUpdateInput.memberPhone === "" ||
-        memberUpdateInput.memberDesc === "" ||
-        memberUpdateInput.memberAddres === ""
-      ) {
-        throw new Error(Messages.error3);
-      }
-      const member = new MemberService();
-      const result = await member.updateMember(memberUpdateInput);
-      setAuthMember(result);
-      await sweetTopSmallSuccessAlert("Modified successfully!", 700);
-    } catch (err) {
-      console.log(err);
-      sweetErrorHandling(err).then();
-    }
-  };
+  try {
+    // ...
+    const member = new MemberService();
+    const result = await member.updateMember(memberUpdateInput);
+    console.log("update result:", result); // ← result ichida memberAddres bormi?
+    setAuthMember(result);
+    await sweetTopSmallSuccessAlert("Modified successfully!", 700);
+  } catch (err) {
+    console.log(err);
+    sweetErrorHandling(err).then();
+  }
+};
 
   const handleImageViewer = (e: T) => {
     const file = e.target.files[0];
@@ -220,8 +213,8 @@ export function Settings() {
                 component="input"
                 className={"spec-input mb-address"}
                 type="text"
-                placeholder={authMember?.memberAddres ?? "No address"}
-                value={memberUpdateInput.memberAddres}
+                placeholder={authMember?.memberAddress ?? "No address"}
+                value={memberUpdateInput.memberAddress}
                 onChange={memberAddresHandler}
                 name="memberAddress"
                 sx={inputSx}

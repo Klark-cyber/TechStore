@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
-  Box, Container, Stack, Pagination, IconButton, Tooltip, CircularProgress,
+  Box, Container, Stack, Pagination, CircularProgress,
   PaginationItem,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -95,18 +95,19 @@ export default function Products(props: ProductsProps) {
 
   const queryParams = new URLSearchParams(location.search);
   const initCollection = (queryParams.get("productCollection") as ProductCollection) || null;
+  const initBrand = queryParams.get("productBrand") || undefined;
 
   const [inquiry, setInquiry] = useState<ProductInquiry>({
     page: 1,
     limit: PRODUCTS_PER_PAGE,
     order: "createdAt",
     productCollection: initCollection || undefined,
+    productBrand: initBrand,
     search: undefined,
   });
   const [activeCollection, setActiveCollection] = useState<ProductCollection | null>(initCollection);
   const [activeOrder, setActiveOrder] = useState<string>("createdAt");
   const [searchText, setSearchText] = useState<string>("");
-  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasNoProducts, setHasNoProducts] = useState(false);
 
@@ -123,7 +124,8 @@ export default function Products(props: ProductsProps) {
     }
   }, [authMember]);
 
-  const totalPages = Math.ceil(totalCount / PRODUCTS_PER_PAGE);
+  // totalPages pagination uchun (hozir ishlatilmayapti)
+  // const totalPages = Math.ceil(totalCount / PRODUCTS_PER_PAGE);
 
   // ── Fetch ──────────────────────────────────────────────────
   const fetchProducts = useCallback(async (inq: ProductInquiry) => {
@@ -134,14 +136,7 @@ export default function Products(props: ProductsProps) {
       const data: any = await service.getProducts(inq);
       const list: Product[] = Array.isArray(data) ? data : data?.list ?? [];
 
-      const total: number = Array.isArray(data)
-        ? (data.length === inq.limit
-            ? (inq.page * inq.limit) + 1
-            : (inq.page - 1) * inq.limit + data.length)
-        : data?.metaCounter?.[0]?.total ?? list.length;
-
       setProducts(list);
-      setTotalCount(total);
 
       // meLiked backenddan kelsa liked set yangilanadi
       if (authMember) {
@@ -166,31 +161,33 @@ export default function Products(props: ProductsProps) {
     } finally {
       setLoading(false);
     }
-  }, [authMember]);
+  }, [authMember]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync URL → state
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const col = (params.get("productCollection") as ProductCollection) || undefined;
+    const brand = params.get("productBrand") || undefined;
     const newInq: ProductInquiry = {
       ...inquiry,
       page: 1,
       productCollection: col,
+      productBrand: brand,
     };
     setInquiry(newInq);
     setActiveCollection(col ?? null);
     fetchProducts(newInq);
-  }, [location.search]);
+  }, [location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Login/logout bo'lganda liked holatni yangilash uchun qayta fetch
   useEffect(() => {
     fetchProducts(inquiry);
-  }, [authMember]);
+  }, [authMember]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Page change
   useEffect(() => {
     fetchProducts(inquiry);
-  }, [inquiry.page, inquiry.order]);
+  }, [inquiry.page, inquiry.order]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Handlers ───────────────────────────────────────────────
   const handleCollectionChange = (col: ProductCollection | null) => {
@@ -205,14 +202,14 @@ export default function Products(props: ProductsProps) {
     fetchProducts(newInq);
   };
 
-  // searchText bo'shatilsa avtomatik reset — burak mantigi
+  // searchText bo'shatilsa avtomatik reset
   useEffect(() => {
     if (searchText === "") {
       const newInq = { ...inquiry, page: 1, search: undefined };
       setInquiry(newInq);
       fetchProducts(newInq);
     }
-  }, [searchText]);
+  }, [searchText]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleOrderChange = (order: string) => {
     setActiveOrder(order);

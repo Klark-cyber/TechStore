@@ -58,7 +58,7 @@ export default function OrdersPage() {
       .getMyOrders({ ...orderInquery, orderStatus: OrderStatus.FINISH })
       .then((data) => setFinishedOrders(data))
       .catch((err) => console.log(err));
-  }, [orderInquery, orderBuilder]);
+  }, [orderInquery, orderBuilder]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChange = (e: SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -74,11 +74,8 @@ export default function OrdersPage() {
           {/* Header */}
           <Stack alignItems="center" spacing={1.5} mb={5}>
             <Box sx={{
-              fontSize: { xs: 22, md: 30 },
-              fontWeight: 900,
-              color: "#fff",
-              fontFamily: "'Orbitron', monospace",
-              textAlign: "center",
+              fontSize: { xs: 22, md: 30 }, fontWeight: 900, color: "#fff",
+              fontFamily: "'Orbitron', monospace", textAlign: "center",
             }}>
               Review Order
             </Box>
@@ -100,17 +97,13 @@ export default function OrdersPage() {
             gap={3}
             alignItems="flex-start"
           >
-            {/* ── LEFT: Orders tabs ── */}
+            {/* ── LEFT ── */}
             <Box
               className="order-left"
               sx={{
-                flex: 2,
-                minWidth: 0,
-                background: CARD,
-                border: `1px solid ${BORDER}`,
-                borderRadius: "16px",
-                overflow: "hidden",
-                width: { xs: "100%", lg: "auto" },
+                flex: 2, minWidth: 0, background: CARD,
+                border: `1px solid ${BORDER}`, borderRadius: "16px",
+                overflow: "hidden", width: { xs: "100%", lg: "auto" },
               }}
             >
               <TabContext value={value}>
@@ -136,8 +129,7 @@ export default function OrdersPage() {
                         </Box>
                         <Box sx={{
                           fontSize: 10, fontWeight: 700, letterSpacing: 1,
-                          color: value === step.val ? BLUE : "rgba(255,255,255,0.3)",
-                          pb: 1,
+                          color: value === step.val ? BLUE : "rgba(255,255,255,0.3)", pb: 1,
                         }}>
                           {step.label}
                         </Box>
@@ -145,9 +137,7 @@ export default function OrdersPage() {
                       {i < 2 && (
                         <Box sx={{
                           flex: 1, height: 2, mx: 1, mb: 3,
-                          background: parseInt(value) > i + 1
-                            ? BLUE
-                            : "rgba(255,255,255,0.08)",
+                          background: parseInt(value) > i + 1 ? BLUE : "rgba(255,255,255,0.08)",
                           transition: "background 0.3s",
                         }} />
                       )}
@@ -185,13 +175,12 @@ export default function OrdersPage() {
               </TabContext>
             </Box>
 
-            {/* ── RIGHT: Order summary + Payment ── */}
+            {/* ── RIGHT ── */}
             <Stack
               className="order-right"
               gap={3}
               sx={{
-                flex: 1,
-                minWidth: 0,
+                flex: 1, minWidth: 0,
                 width: { xs: "100%", lg: "auto" },
                 position: { lg: "sticky" },
                 top: { lg: 100 },
@@ -199,10 +188,8 @@ export default function OrdersPage() {
             >
               {/* User info */}
               <Box className="order-info-box" sx={{
-                background: CARD,
-                border: `1px solid ${BORDER}`,
-                borderRadius: "16px",
-                p: 3,
+                background: CARD, border: `1px solid ${BORDER}`,
+                borderRadius: "16px", p: 3,
               }}>
                 <Stack alignItems="center" spacing={1.5}>
                   <Box className="member-box">
@@ -213,12 +200,11 @@ export default function OrdersPage() {
                           src={authMember?.memberImage
                             ? `${serverApi}/${authMember.memberImage}`
                             : "/icons/default-user.svg"}
+                          alt={authMember?.memberNick ?? "user avatar"}
                           className="order-user-avatar"
                           sx={{
-                            width: 72, height: 72,
-                            borderRadius: "50%",
-                            border: `2px solid ${BLUE}`,
-                            objectFit: "cover",
+                            width: 72, height: 72, borderRadius: "50%",
+                            border: `2px solid ${BLUE}`, objectFit: "cover",
                           }}
                         />
                         <Box className="order-user-icon-box" sx={{
@@ -227,10 +213,12 @@ export default function OrdersPage() {
                           background: "#0d1020", border: `2px solid ${BLUE}`,
                           display: "flex", alignItems: "center", justifyContent: "center",
                         }}>
+                          {/* ✅ alt qo'shildi */}
                           <img
                             src={authMember?.memberType === MemberType.ADMIN
                               ? "/icons/restaurant.svg"
                               : "/icons/user-badge.svg"}
+                            alt="member type"
                             className="order-user-prof-img"
                             style={{ width: 13, height: 13 }}
                           />
@@ -258,7 +246,7 @@ export default function OrdersPage() {
                   <Stack direction="row" alignItems="center" gap={1} className="order-user-address">
                     <LocationOnIcon sx={{ fontSize: 16, color: BLUE }} />
                     <Box sx={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-                      {authMember?.memberAddres ?? "No Address"}
+                      {authMember?.memberAddress ?? "No Address"}
                     </Box>
                   </Stack>
                 </Stack>
@@ -266,10 +254,8 @@ export default function OrdersPage() {
 
               {/* Payment card */}
               <Box className="order-info-box" sx={{
-                background: CARD,
-                border: `1px solid ${BORDER}`,
-                borderRadius: "16px",
-                p: 3,
+                background: CARD, border: `1px solid ${BORDER}`,
+                borderRadius: "16px", p: 3,
               }}>
                 <Box sx={{ fontSize: 15, fontWeight: 700, color: "#fff", mb: 2.5,
                   fontFamily: "'Orbitron', monospace" }}>
@@ -277,81 +263,58 @@ export default function OrdersPage() {
                 </Box>
 
                 <Stack spacing={2}>
-                  <Box
-                    component="input"
-                    type="text"
-                    name="cardNumber"
-                    placeholder="Card number: 5243 4090 2002 7495"
-                    className="card-input"
-                    sx={{
-                      width: "100%", background: "rgba(255,255,255,0.04)",
-                      border: `1px solid rgba(255,255,255,0.1)`,
-                      borderRadius: "10px", px: 2, py: 1.5,
-                      fontSize: 14, color: "#fff", outline: "none",
-                      boxSizing: "border-box",
-                      "&::placeholder": { color: "rgba(255,255,255,0.25)" },
-                      "&:focus": { borderColor: BLUE },
-                      transition: "border-color 0.2s",
-                    }}
-                  />
+                  {[
+                    { name: "cardNumber", placeholder: "Card number: 5243 4090 2002 7495", full: true },
+                    { name: "cardCreator", placeholder: "Justin Robertson", full: true },
+                  ].map((f) => (
+                    <Box key={f.name}
+                      component="input" type="text"
+                      name={f.name} placeholder={f.placeholder}
+                      className="card-input"
+                      sx={{
+                        width: "100%", background: "rgba(255,255,255,0.04)",
+                        border: `1px solid rgba(255,255,255,0.1)`,
+                        borderRadius: "10px", px: 2, py: 1.5,
+                        fontSize: 14, color: "#fff", outline: "none",
+                        boxSizing: "border-box",
+                        "&::placeholder": { color: "rgba(255,255,255,0.25)" },
+                        "&:focus": { borderColor: BLUE },
+                        transition: "border-color 0.2s",
+                      }}
+                    />
+                  ))}
                   <Stack direction="row" gap={1.5}>
-                    <Box
-                      component="input"
-                      type="text"
-                      name="cardPeriod"
-                      placeholder="07 / 24"
-                      className="card-half-input"
-                      sx={{
-                        flex: 1, background: "rgba(255,255,255,0.04)",
-                        border: `1px solid rgba(255,255,255,0.1)`,
-                        borderRadius: "10px", px: 2, py: 1.5,
-                        fontSize: 14, color: "#fff", outline: "none",
-                        "&::placeholder": { color: "rgba(255,255,255,0.25)" },
-                        "&:focus": { borderColor: BLUE },
-                        transition: "border-color 0.2s",
-                      }}
-                    />
-                    <Box
-                      component="input"
-                      type="text"
-                      name="cardCVV"
-                      placeholder="CVV: 010"
-                      className="card-half-input"
-                      sx={{
-                        flex: 1, background: "rgba(255,255,255,0.04)",
-                        border: `1px solid rgba(255,255,255,0.1)`,
-                        borderRadius: "10px", px: 2, py: 1.5,
-                        fontSize: 14, color: "#fff", outline: "none",
-                        "&::placeholder": { color: "rgba(255,255,255,0.25)" },
-                        "&:focus": { borderColor: BLUE },
-                        transition: "border-color 0.2s",
-                      }}
-                    />
+                    {[
+                      { name: "cardPeriod", placeholder: "07 / 24" },
+                      { name: "cardCVV",    placeholder: "CVV: 010" },
+                    ].map((f) => (
+                      <Box key={f.name}
+                        component="input" type="text"
+                        name={f.name} placeholder={f.placeholder}
+                        className="card-half-input"
+                        sx={{
+                          flex: 1, background: "rgba(255,255,255,0.04)",
+                          border: `1px solid rgba(255,255,255,0.1)`,
+                          borderRadius: "10px", px: 2, py: 1.5,
+                          fontSize: 14, color: "#fff", outline: "none",
+                          "&::placeholder": { color: "rgba(255,255,255,0.25)" },
+                          "&:focus": { borderColor: BLUE },
+                          transition: "border-color 0.2s",
+                        }}
+                      />
+                    ))}
                   </Stack>
-                  <Box
-                    component="input"
-                    type="text"
-                    name="cardCreator"
-                    placeholder="Justin Robertson"
-                    className="card-input"
-                    sx={{
-                      width: "100%", background: "rgba(255,255,255,0.04)",
-                      border: `1px solid rgba(255,255,255,0.1)`,
-                      borderRadius: "10px", px: 2, py: 1.5,
-                      fontSize: 14, color: "#fff", outline: "none",
-                      boxSizing: "border-box",
-                      "&::placeholder": { color: "rgba(255,255,255,0.25)" },
-                      "&:focus": { borderColor: BLUE },
-                      transition: "border-color 0.2s",
-                    }}
-                  />
                 </Stack>
 
-                {/* Card icons */}
+                {/* Card icons — ✅ alt qo'shildi */}
                 <Stack direction="row" gap={1.5} className="cards-box" mt={2.5}
                   alignItems="center" justifyContent="center">
-                  {["/icons/western-card.svg", "/icons/master-card.svg",
-                    "/icons/paypal-card.svg", "/icons/visa-card.svg"].map((src, i) => (
+                  {[
+                    { src: "/icons/western-card.svg", alt: "Western Union" },
+                    { src: "/icons/master-card.svg",  alt: "Mastercard" },
+                    { src: "/icons/paypal-card.svg",  alt: "PayPal" },
+                    { src: "/icons/visa-card.svg",    alt: "Visa" },
+                  ].map((card, i) => (
                     <Box key={i} sx={{
                       background: "rgba(255,255,255,0.06)",
                       border: `1px solid rgba(255,255,255,0.1)`,
@@ -360,12 +323,11 @@ export default function OrdersPage() {
                       "&:hover": { borderColor: BLUE },
                       transition: "border-color 0.2s",
                     }}>
-                      <img src={src} style={{ height: 20, display: "block" }} />
+                      <img src={card.src} alt={card.alt} style={{ height: 20, display: "block" }} />
                     </Box>
                   ))}
                 </Stack>
 
-                {/* SSL note */}
                 <Box sx={{ textAlign: "center", fontSize: 11, color: "rgba(255,255,255,0.25)",
                   mt: 2, letterSpacing: 1, textTransform: "uppercase" }}>
                   Secure Checkout • SSL Encrypted

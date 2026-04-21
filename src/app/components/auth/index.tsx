@@ -117,18 +117,25 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
 
   /* ── MUI input dark style ── */
   const inputSx = {
-    "& .MuiOutlinedInput-root": {
-      color: "#fff",
-      borderRadius: "10px",
-      "& fieldset": { borderColor: "rgba(41,121,255,0.25)" },
-      "&:hover fieldset": { borderColor: "rgba(41,121,255,0.5)" },
-      "&.Mui-focused fieldset": { borderColor: "#2979ff" },
-      background: "rgba(255,255,255,0.04)",
-    },
-    "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.4)" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#2979ff" },
-    "& .MuiInputAdornment-root svg": { color: "rgba(255,255,255,0.3)" },
-  };
+  "& .MuiOutlinedInput-root": {
+    color: "#fff",
+    borderRadius: "10px",
+    "& fieldset": { borderColor: "rgba(41,121,255,0.25)" },
+    "&:hover fieldset": { borderColor: "rgba(41,121,255,0.5)" },
+    "&.Mui-focused fieldset": { borderColor: "#2979ff" },
+    background: "rgba(255,255,255,0.04)",
+  },
+  "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.4)" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "#2979ff" },
+  "& .MuiInputAdornment-root svg": { color: "rgba(255,255,255,0.3)" },
+
+  // ✅ Autofill override — MUI TextField uchun
+  "& input:-webkit-autofill": {
+    WebkitBoxShadow: "0 0 0 1000px rgba(10,12,28,0.97) inset !important",
+    WebkitTextFillColor: "#fff !important",
+    caretColor: "#fff",
+  },
+};
 
   /* ── submit button ── */
   const fabSx = {

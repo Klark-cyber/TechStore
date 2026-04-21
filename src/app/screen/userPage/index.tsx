@@ -139,6 +139,7 @@ export default function UserPage() {
                             ? "/icons/restaurant.svg"
                             : "/icons/user-badge.svg"
                         }
+                         alt="member type"
                         style={{ width: 16, height: 16 }}
                       />
                     </Box>
@@ -184,7 +185,7 @@ export default function UserPage() {
                     className={"order-user-prof"}
                     sx={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}
                   >
-                    {authMember?.memberAddres ?? "No Address"}
+                    {authMember?.memberAddress ?? "No Address"}
                   </Box>
 
                   {/* Divider */}
