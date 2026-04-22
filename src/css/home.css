@@ -1,199 +1,304 @@
 /* ============================================================
-   HOME.CSS  —  HomePage va unga tegishli section komponentlar
-   Covers: .homepage, NewArrivals, ActiveUsers, Events
+   HOME.CSS — All homepage section components
+   Covers: ActiveUsers, Advertisement, NewArrivals, Events, TopBrands
+   Background: #060b13 everywhere — no visible lines between sections
    ============================================================ */
 
-/* ── Root wrapper ── */
+/* ── Root ── */
 .homepage {
   width: 100%;
-  height: auto;
   background: #060b13;
 }
 
 /* ============================================================
-   NEW ARRIVALS
+   SHARED — fadeUp animation (used by multiple sections)
    ============================================================ */
-.homepage .new-products-frame {
-  width: 100%;
-  background: #060b13;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.homepage .new-products-frame .main {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.homepage .new-products-frame .category-title {
-  color: #ffffff;
-  text-align: center;
-  font-family: "Orbitron", monospace;
-  font-size: 32px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-}
-
-.homepage .new-products-frame .main .cards-frame {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.homepage .new-products-frame .main .card {
-  background: #0d1020;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.homepage .new-products-frame .main .card:hover {
-  border-color: #2979ff;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(41, 121, 255, 0.18);
-}
-
-.homepage .new-products-frame .no-data {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Orbitron", monospace;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.2);
-  padding: 80px 0;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ============================================================
    ACTIVE USERS
    ============================================================ */
-.homepage .active-users-frame {
-  width: 100%;
-  background: #060b13;
-}
-
-.homepage .active-users-frame .main {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.homepage .active-users-frame .category-title {
-  color: #ffffff;
-  text-align: center;
-  font-family: "Orbitron", monospace;
-  font-size: 32px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-}
-
-.homepage .active-users-frame .cards-frame {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 24px;
-  background: transparent;
-  height: auto;
-  margin-top: 0;
-}
-
-.homepage .active-users-frame .cards-frame .card {
-  background: #0d1020;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
+.active-user-card {
+  position: relative;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 0;
+  background: #0d1020;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  flex-shrink: 0;
+  animation: fadeUp 0.55s ease both;
 }
 
-.homepage .active-users-frame .cards-frame .card:hover {
-  border-color: #2979ff;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(41, 121, 255, 0.18);
+.active-user-card:nth-child(1) { animation-delay: 0.00s; }
+.active-user-card:nth-child(2) { animation-delay: 0.08s; }
+.active-user-card:nth-child(3) { animation-delay: 0.16s; }
+.active-user-card:nth-child(4) { animation-delay: 0.24s; }
+.active-user-card:nth-child(5) { animation-delay: 0.32s; }
+
+.active-user-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(41, 121, 255, 0.5);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(41, 121, 255, 0.12),
+    0 0 40px rgba(41, 121, 255, 0.1);
 }
 
-.homepage .active-users-frame .cards-frame .member-nickname {
-  color: #ffffff;
-  text-align: center;
-  font-family: "Orbitron", monospace;
-  font-size: 14px;
-  font-weight: 600;
-  background: transparent;
-  width: auto;
-  height: auto;
-  margin-top: 0;
-}
-
-.homepage .active-users-frame .cards-frame .no-data {
+.user-avatar-wrap {
+  position: relative;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Orbitron", monospace;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.2);
-  padding: 80px 0;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #111827;
+}
+
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease;
+}
+
+.active-user-card:hover .user-avatar-img {
+  transform: scale(1.08);
+}
+
+.user-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 55%, rgba(13, 16, 32, 0.92) 100%);
+  pointer-events: none;
+}
+
+.user-online-dot {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #0d1020;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  z-index: 2;
+}
+
+.user-info {
+  padding: 14px 16px 16px;
+  background: #0d1020;
+}
+
+.user-nick {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.user-role {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 /* ============================================================
-   EVENTS (Exclusive Showcase)
+   ADVERTISEMENT
    ============================================================ */
-.homepage .events-frame {
+.ads-wrapper {
   width: 100%;
   background: #060b13;
+  padding: 80px 0 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
+  position: relative;
 }
 
-.homepage .events-frame .events-main {
+.ads-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2979ff;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.ads-title {
+  font-family: "Orbitron", monospace;
+  font-weight: 900;
+  font-size: clamp(22px, 3vw, 36px);
+  color: #fff;
+  text-align: center;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.ads-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.ads-scene {
+  width: 92%;
+  max-width: 1300px;
+  perspective: 1200px;
+  position: relative;
+}
+
+.ads-video-box {
   position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  transform: rotateX(6deg) scale(1.02);
+  transform-origin: center bottom;
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(41, 121, 255, 0.12),
+    0 0 80px rgba(41, 121, 255, 0.08);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
 
-.homepage .events-frame .category-title {
-  color: #ffffff;
-  font-family: "Orbitron", monospace;
-  font-size: 32px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-align: center;
+.ads-video-box:hover {
+  transform: rotateX(2deg) scale(1.01);
+  box-shadow:
+    0 60px 120px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(41, 121, 255, 0.2),
+    0 0 120px rgba(41, 121, 255, 0.12);
 }
 
-.homepage .events-frame .dot-frame-pagination {
+.ads-ratio {
+  padding-top: 56.25%;
+}
+
+.ads-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.ads-fade-left,
+.ads-fade-right {
+  position: absolute;
+  top: 0;
+  width: 10%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ads-fade-left {
+  left: 0;
+  background: linear-gradient(to right, rgba(6, 11, 19, 0.85) 0%, transparent 100%);
+}
+
+.ads-fade-right {
+  right: 0;
+  background: linear-gradient(to left, rgba(6, 11, 19, 0.85) 0%, transparent 100%);
+}
+
+.ads-reflection {
+  width: 92%;
+  max-width: 1300px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(41, 121, 255, 0.06), transparent);
+  border-radius: 0 0 16px 16px;
+  filter: blur(8px);
+  transform: scaleY(-1) translateY(-2px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ads-glow {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 120px;
+  background: radial-gradient(ellipse, rgba(41, 121, 255, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   EVENTS (Exclusive Showcase) — Swiper pagination
+   ============================================================ */
+.events-section {
+  width: 100%;
+  background: #060b13;
   position: relative;
-  width: auto;
-  display: flex;
-  justify-content: center;
+  overflow: hidden;
 }
 
-.homepage .events-frame .swiper-pagination-bullet {
-  margin-right: 5px;
+.events-bg-glow {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(41, 121, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Card image zoom on hover */
+.event-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card-img:hover {
+  transform: scale(1.06);
+}
+
+/* Category badge */
+.event-category-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #60a5fa;
+  background: rgba(41, 121, 255, 0.15);
+  border: 1px solid rgba(41, 121, 255, 0.25);
+  border-radius: 5px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+/* Custom swiper pagination */
+.custom-pagination .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 1;
   width: 8px;
   height: 8px;
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+  margin: 0 3px;
   transition: all 0.3s;
 }
 
-.homepage .events-frame .swiper-pagination-bullet-active {
+.custom-pagination .swiper-pagination-bullet-active {
   background: #2979ff;
   width: 24px;
   border-radius: 4px;
@@ -201,44 +306,30 @@
 }
 
 /* ============================================================
-   POPULAR DISHES  (eski kod uchun qoldirildi, lekin override)
+   TOP BRANDS
    ============================================================ */
-.homepage .popular-dishes-frame {
-  width: 100%;
+.brands-section {
   background: #060b13;
-  display: flex;
-}
-
-.homepage .popular-dishes-frame .popular-section {
-  margin-top: 45px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.homepage .popular-dishes-frame .popular-section .category-title {
-  color: #ffffff;
-  text-align: center;
-  font-family: "Orbitron", monospace;
-  font-size: 32px;
-  font-weight: 900;
+.brand-card-img {
+  transition: filter 0.5s ease;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
-.homepage .popular-dishes-frame .popular-section .cards-frame {
-  width: 100%;
-  margin-top: 43px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.brand-card-desc {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.homepage .popular-dishes-frame .no-data {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Orbitron", monospace;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.2);
-  padding: 80px 0;
+/* ============================================================
+   STATISTICS — no border lines
+   ============================================================ */
+.static-frame {
+  border-top: none !important;
+  border-bottom: none !important;
 }
